@@ -36,6 +36,12 @@
                 Produk
             </a>
         </li>
+        <li>
+            <a href="{{ route('pelanggans.index') }}" class="@if(request()->routeIs('pelanggans.*')) active @endif">
+                <i class="fas fa-user-friends"></i>
+                Pelanggan
+            </a>
+        </li>
 
         <li class="sidebar-menu-title">Laporan</li>
         <li>

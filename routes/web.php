@@ -9,6 +9,8 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\KategoriController;
 
 // Public Routes
 Route::get('/', function () {
@@ -49,6 +51,16 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::post('products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggle-status');
     Route::get('products/{product}/stock-history', [ProductController::class, 'stockHistory'])->name('products.stock-history');
+
+    // Categories
+    Route::middleware(['admin'])->group(function () {
+        Route::resource('kategoris', KategoriController::class);
+    });
+
+    // Pelanggans (Customers)
+    Route::resource('pelanggans', PelangganController::class);
+    Route::post('pelanggans/{pelanggan}/toggle-status', [PelangganController::class, 'toggleStatus'])->name('pelanggans.toggle-status');
+    Route::post('pelanggans/{pelanggan}/reset-poin', [PelangganController::class, 'resetPoin'])->name('pelanggans.reset-poin');
 
     // Transactions (Sales)
     Route::resource('transactions', TransactionController::class);

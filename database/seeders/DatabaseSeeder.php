@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Pelanggan;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -92,6 +93,57 @@ class DatabaseSeeder extends Seeder
             'cost' => 4000,
             'stock' => 200,
             'min_stock' => 30,
+            'status' => true,
+        ]);
+
+        // Create sample customers
+        Pelanggan::create([
+            'nama' => 'Budi Santoso',
+            'no_hp' => '081234567893',
+            'alamat' => 'Jl. Merdeka No. 123, Jakarta',
+            'email' => 'budi@email.com',
+            'member_level' => 'Gold',
+            'poin' => 150,
+            'status' => true,
+        ]);
+
+        Pelanggan::create([
+            'nama' => 'Rina Putri',
+            'no_hp' => '081234567894',
+            'alamat' => 'Jl. Sudirman No. 456, Jakarta',
+            'email' => 'rina@email.com',
+            'member_level' => 'Silver',
+            'poin' => 75,
+            'status' => true,
+        ]);
+
+        Pelanggan::create([
+            'nama' => 'Hendra Gunawan',
+            'no_hp' => '081234567895',
+            'alamat' => 'Jl. Gatot Subroto No. 789, Jakarta',
+            'email' => 'hendra@email.com',
+            'member_level' => 'Platinum',
+            'poin' => 300,
+            'status' => true,
+        ]);
+
+        Pelanggan::create([
+            'nama' => 'Dewi Lestari',
+            'no_hp' => '081234567896',
+            'alamat' => 'Jl. Ahmad Yani No. 321, Bandung',
+            'email' => 'dewi@email.com',
+            'member_level' => 'Bronze',
+            'poin' => 25,
+            'status' => true,
+        ]);
+
+        Pelanggan::create([
+            'nama' => 'Agus Hermawan',
+            'no_hp' => '081234567897',
+            'alamat' => 'Jl. Diponegoro No. 654, Surabaya',
+            'email' => 'agus@email.com',
+            'member_level' => 'Gold',
+            'poin' => 200,
             'status' => true,
         ]);
     }
