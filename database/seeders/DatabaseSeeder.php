@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
             'category' => 'Minuman',
             'price' => 25000,
             'cost' => 15000,
-            'stock' => 100,
+            'stok' => 100,
             'min_stock' => 10,
             'status' => true,
         ]);
@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
             'category' => 'Minuman',
             'price' => 15000,
             'cost' => 8000,
-            'stock' => 150,
+            'stok' => 150,
             'min_stock' => 20,
             'status' => true,
         ]);
@@ -79,7 +79,7 @@ class DatabaseSeeder extends Seeder
             'category' => 'Makanan',
             'price' => 20000,
             'cost' => 12000,
-            'stock' => 50,
+            'stok' => 50,
             'min_stock' => 5,
             'status' => true,
         ]);
@@ -91,7 +91,7 @@ class DatabaseSeeder extends Seeder
             'category' => 'Makanan',
             'price' => 8000,
             'cost' => 4000,
-            'stock' => 200,
+            'stok' => 200,
             'min_stock' => 30,
             'status' => true,
         ]);

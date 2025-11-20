@@ -37,6 +37,12 @@
             </a>
         </li>
         <li>
+            <a href="{{ route('kategoris.index') }}" class="@if(request()->routeIs('kategoris.*')) active @endif">
+                <i class="fas fa-tags"></i>
+                Kategori
+            </a>
+        </li>
+        <li>
             <a href="{{ route('pelanggans.index') }}" class="@if(request()->routeIs('pelanggans.*')) active @endif">
                 <i class="fas fa-user-friends"></i>
                 Pelanggan

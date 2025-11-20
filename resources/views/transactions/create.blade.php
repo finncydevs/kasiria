@@ -13,6 +13,7 @@
     <div class="card">
         <div class="card-header">Transaksi Baru</div>
         <div class="card-body">
+            {{-- Error Display --}}
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul class="mb-0">
@@ -32,76 +33,119 @@
                         <input type="text" class="form-control" value="{{ $transactionNumber }}" readonly>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Nama Customer (optional)</label>
-                        <input type="text" name="customer_name" class="form-control" value="{{ old('customer_name') }}">
+                        <label class="form-label">Pelanggan (Optional)</label>
+                        <select name="pelanggan_id" class="form-select">
+                            <option value="">-- Tidak Ada --</option>
+                            @foreach($pelanggans as $p)
+                                <option value="{{ $p->id }}" {{ old('pelanggan_id') == $p->id ? 'selected' : '' }}>
+                                    {{ $p->nama }} ({{ $p->no_hp ?? '-' }})
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Metode Pembayaran</label>
                         <select name="payment_method" class="form-select" required>
-                            <option value="cash">Tunai</option>
-                            <option value="card">Kartu</option>
-                            <option value="other">Lainnya</option>
+                            <option value="cash" {{ old('payment_method') == 'cash' ? 'selected' : '' }}>Tunai</option>
+                            <option value="card" {{ old('payment_method') == 'card' ? 'selected' : '' }}>Kartu</option>
+                            <option value="other" {{ old('payment_method') == 'other' ? 'selected' : '' }}>Lainnya</option>
                         </select>
                     </div>
                 </div>
 
                 <h5>Item</h5>
                 <div class="table-responsive">
-                    <table class="table table-sm" id="items-table">
-                        <thead>
+                    <table class="table table-sm table-bordered" id="items-table">
+                        <thead class="table-light">
                             <tr>
-                                <th>Produk</th>
-                                <th>Harga Satuan</th>
-                                <th>Jumlah</th>
-                                <th>Diskon</th>
-                                <th>Subtotal</th>
-                                <th></th>
+                                <th style="width: 35%">Produk</th>
+                                <th style="width: 15%">Harga</th>
+                                <th style="width: 10%">Qty</th>
+                                <th style="width: 15%">Diskon Item</th>
+                                <th style="width: 20%">Subtotal</th>
+                                <th style="width: 5%">Act</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {{-- Initial Row --}}
                             <tr class="item-row">
-                                <td style="width:40%">
-                                    <select name="items[][product_id]" class="form-select product-select" required>
+                                <td>
+                                    {{-- Notice: name="items[0][product_id]" --}}
+                                    <select name="items[0][product_id]" class="form-select product-select" required>
                                         <option value="">-- Pilih Produk --</option>
                                         @foreach($products as $p)
-                                            <option value="{{ $p->id }}" data-price="{{ $p->price }}">{{ $p->name }} ({{ $p->sku }}) - Rp {{ number_format($p->price,0,',','.') }}</option>
+                                            <option value="{{ $p->id }}" data-price="{{ $p->harga_jual }}">
+                                                {{ $p->nama_produk }} (Stok: {{ $p->stok }})
+                                            </option>
                                         @endforeach
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="number" name="items[][unit_price]" class="form-control unit-price" step="0.01" required>
+                                    <input type="number" name="items[0][unit_price]" class="form-control unit-price" step="0.01" readonly>
                                 </td>
                                 <td>
-                                    <input type="number" name="items[][quantity]" class="form-control quantity" value="1" min="1" required>
+                                    <input type="number" name="items[0][quantity]" class="form-control quantity" value="1" min="1" required>
                                 </td>
                                 <td>
-                                    <input type="number" name="items[][discount]" class="form-control discount" step="0.01" value="0">
+                                    <input type="number" name="items[0][discount]" class="form-control discount" step="0.01" value="0">
                                 </td>
-                                <td class="text-end subtotal-cell">Rp 0</td>
+                                <td class="text-end subtotal-cell fw-bold">Rp 0</td>
                                 <td>
-                                    <button type="button" class="btn btn-sm btn-danger remove-row">×</button>
+                                    <button type="button" class="btn btn-sm btn-danger remove-row"><i class="fas fa-times"></i></button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div class="mb-3">
-                    <button type="button" id="add-row" class="btn btn-sm btn-outline-primary"><i class="fas fa-plus"></i> Tambah Item</button>
-                </div>
+                <button type="button" id="add-row" class="btn btn-sm btn-outline-primary mb-3">
+                    <i class="fas fa-plus"></i> Tambah Item
+                </button>
 
-                <div class="row mt-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Diskon (total)</label>
-                        <input type="number" name="discount" class="form-control" step="0.01" value="0">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Pajak</label>
-                        <input type="number" name="tax" class="form-control" step="0.01" value="0">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Jumlah Dibayar</label>
-                        <input type="number" name="amount_paid" class="form-control" step="0.01" required>
+                <div class="card bg-light border-0">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 offset-md-6">
+                                <div class="mb-2 row">
+                                    <label class="col-sm-4 col-form-label">Subtotal</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="display-subtotal" class="form-control-plaintext fw-bold text-end" value="Rp 0" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-4 col-form-label">Diskon Global</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" name="discount" id="global-discount" class="form-control text-end" value="0" min="0">
+                                    </div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-4 col-form-label">Pajak</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" name="tax" id="global-tax" class="form-control text-end" value="0" min="0">
+                                    </div>
+                                </div>
+                                <div class="mb-2 row">
+                                    <label class="col-sm-4 col-form-label fw-bold text-primary">Total Akhir</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="display-total" class="form-control-plaintext fw-bold text-end text-primary h5" value="Rp 0" readonly>
+                                        {{-- Hidden input for calculation validation if needed --}}
+                                        <input type="hidden" id="real-total" value="0">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label class="col-sm-4 col-form-label fw-bold">Jumlah Dibayar</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" name="amount_paid" id="amount-paid" class="form-control form-control-lg text-end" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="col-sm-4 col-form-label">Kembalian</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" id="change" class="form-control-plaintext fw-bold text-end text-success" value="Rp 0" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -120,57 +164,118 @@
 
     @push('scripts')
     <script>
-        function recalcRow($row) {
-            var price = parseFloat($row.querySelector('.unit-price').value) || 0;
-            var qty = parseFloat($row.querySelector('.quantity').value) || 0;
-            var disc = parseFloat($row.querySelector('.discount').value) || 0;
-            var subtotal = (price * qty) - disc;
-            $row.querySelector('.subtotal-cell').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
+        function formatRupiah(angka) {
+            return 'Rp ' + new Intl.NumberFormat('id-ID').format(angka);
         }
 
-        function bindRow(row) {
-            row.querySelector('.product-select').addEventListener('change', function(e){
-                var opt = this.options[this.selectedIndex];
-                var price = opt ? opt.getAttribute('data-price') : 0;
-                row.querySelector('.unit-price').value = price || '';
-                recalcRow(row);
+        // Updates the index (0, 1, 2) for name attributes: items[0][product_id], items[1][product_id]
+        function updateRowIndices() {
+            const rows = document.querySelectorAll('#items-table tbody tr');
+            rows.forEach((row, index) => {
+                row.querySelector('.product-select').name = `items[${index}][product_id]`;
+                row.querySelector('.unit-price').name = `items[${index}][unit_price]`;
+                row.querySelector('.quantity').name = `items[${index}][quantity]`;
+                row.querySelector('.discount').name = `items[${index}][discount]`;
             });
-            row.querySelector('.unit-price').addEventListener('input', function(){ recalcRow(row); });
-            row.querySelector('.quantity').addEventListener('input', function(){ recalcRow(row); });
-            row.querySelector('.discount').addEventListener('input', function(){ recalcRow(row); });
-            row.querySelector('.remove-row').addEventListener('click', function(){
-                if (document.querySelectorAll('#items-table tbody tr').length > 1) {
-                    row.remove();
-                } else {
-                    // clear
-                    row.querySelector('.product-select').value = '';
-                    row.querySelector('.unit-price').value = '';
-                    row.querySelector('.quantity').value = 1;
-                    row.querySelector('.discount').value = 0;
-                    recalcRow(row);
-                }
+        }
+
+        function recalcRow(row) {
+            const price = parseFloat(row.querySelector('.unit-price').value) || 0;
+            const qty = parseFloat(row.querySelector('.quantity').value) || 0;
+            const disc = parseFloat(row.querySelector('.discount').value) || 0;
+
+            let subtotal = (price * qty) - disc;
+            if(subtotal < 0) subtotal = 0;
+
+            row.querySelector('.subtotal-cell').textContent = formatRupiah(subtotal);
+            row.querySelector('.subtotal-cell').dataset.value = subtotal; // Store raw value
+
+            recalcGrandTotal();
+        }
+
+        function recalcGrandTotal() {
+            let subtotalAll = 0;
+            document.querySelectorAll('.subtotal-cell').forEach(cell => {
+                subtotalAll += parseFloat(cell.dataset.value) || 0;
             });
+
+            const globalDisc = parseFloat(document.getElementById('global-discount').value) || 0;
+            const globalTax = parseFloat(document.getElementById('global-tax').value) || 0;
+
+            const grandTotal = subtotalAll - globalDisc + globalTax;
+
+            document.getElementById('display-subtotal').value = formatRupiah(subtotalAll);
+            document.getElementById('display-total').value = formatRupiah(grandTotal);
+            document.getElementById('real-total').value = grandTotal;
+
+            calcChange();
+        }
+
+        function calcChange() {
+            const total = parseFloat(document.getElementById('real-total').value) || 0;
+            const paid = parseFloat(document.getElementById('amount-paid').value) || 0;
+            const change = paid - total;
+
+            document.getElementById('change').value = formatRupiah(change);
         }
 
         document.addEventListener('DOMContentLoaded', function(){
-            var add = document.getElementById('add-row');
-            var tbody = document.querySelector('#items-table tbody');
-            var template = document.querySelector('.item-row');
-            bindRow(template);
+            const tbody = document.querySelector('#items-table tbody');
 
-            add.addEventListener('click', function(){
-                var clone = template.cloneNode(true);
-                // clear values
-                clone.querySelector('.product-select').value = '';
-                clone.querySelector('.unit-price').value = '';
-                clone.querySelector('.quantity').value = 1;
-                clone.querySelector('.discount').value = 0;
-                tbody.appendChild(clone);
-                bindRow(clone);
+            // Event Delegation for Calculation
+            tbody.addEventListener('input', function(e) {
+                if (e.target.matches('.quantity, .discount')) {
+                    recalcRow(e.target.closest('tr'));
+                }
             });
 
-            // initial recalc
-            document.querySelectorAll('#items-table tbody tr').forEach(function(r){ recalcRow(r); });
+            // Event Delegation for Product Selection
+            tbody.addEventListener('change', function(e) {
+                if (e.target.matches('.product-select')) {
+                    const row = e.target.closest('tr');
+                    const option = e.target.options[e.target.selectedIndex];
+                    const price = option.getAttribute('data-price') || 0;
+
+                    row.querySelector('.unit-price').value = price;
+                    recalcRow(row);
+                }
+            });
+
+            // Event Delegation for Remove Row
+            tbody.addEventListener('click', function(e) {
+                if (e.target.closest('.remove-row')) {
+                    const row = e.target.closest('tr');
+                    if (tbody.querySelectorAll('tr').length > 1) {
+                        row.remove();
+                        updateRowIndices(); // IMPORTANT: Fix indices after delete
+                        recalcGrandTotal();
+                    } else {
+                        alert("Minimal satu item.");
+                    }
+                }
+            });
+
+            // Global inputs
+            document.getElementById('global-discount').addEventListener('input', recalcGrandTotal);
+            document.getElementById('global-tax').addEventListener('input', recalcGrandTotal);
+            document.getElementById('amount-paid').addEventListener('input', calcChange);
+
+            // Add Row Logic
+            document.getElementById('add-row').addEventListener('click', function() {
+                const firstRow = tbody.querySelector('tr');
+                const newRow = firstRow.cloneNode(true);
+
+                // Clear inputs
+                newRow.querySelector('.product-select').value = '';
+                newRow.querySelector('.unit-price').value = '';
+                newRow.querySelector('.quantity').value = 1;
+                newRow.querySelector('.discount').value = 0;
+                newRow.querySelector('.subtotal-cell').textContent = 'Rp 0';
+                newRow.querySelector('.subtotal-cell').dataset.value = 0;
+
+                tbody.appendChild(newRow);
+                updateRowIndices(); // IMPORTANT: Fix indices after add
+            });
         });
     </script>
     @endpush

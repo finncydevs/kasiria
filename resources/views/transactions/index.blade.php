@@ -1,78 +1,54 @@
 @extends('layouts.admin')
 
-@section('title', 'Transaksi - Kasiria')
-@section('page_title', 'Transaksi')
-
-@section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-    <li class="breadcrumb-item active">Transaksi</li>
-@endsection
+@section('title', 'Riwayat Transaksi')
 
 @section('content')
-    <div class="page-header d-flex align-items-center justify-content-between">
-        <h1>Transaksi</h1>
-        <div>
-            <a href="{{ route('transactions.create') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Transaksi Baru</a>
-        </div>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span class="fw-bold">Daftar Transaksi</span>
+        <a href="{{ route('transactions.create') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Transaksi Baru
+        </a>
     </div>
+    <div class="card-body">
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
 
-    <div class="card mt-3">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>No. Transaksi</th>
-                            <th>Kasir</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Pembayaran</th>
-                            <th>Status</th>
-                            <th>Tanggal</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($transactions as $tx)
-                            <tr>
-                                <td><a href="{{ route('transactions.show', $tx) }}">{{ $tx->transaction_number }}</a></td>
-                                <td>{{ $tx->cashier->nama ?? $tx->cashier->username ?? '—' }}</td>
-                                <td>{{ $tx->customer_name ?? '-' }}</td>
-                                <td>Rp {{ number_format($tx->total, 0, ',', '.') }}</td>
-                                <td>{{ ucfirst($tx->payment_method) }}</td>
-                                <td>
-                                    @if($tx->status === 'completed')
-                                        <span class="badge bg-success">Selesai</span>
-                                    @elseif($tx->status === 'refunded')
-                                        <span class="badge bg-warning">Dikembalikan</span>
-                                    @else
-                                        <span class="badge bg-secondary">{{ ucfirst($tx->status) }}</span>
-                                    @endif
-                                </td>
-                                <td>{{ $tx->created_at->format('Y-m-d H:i') }}</td>
-                                <td>
-                                    <a href="{{ route('transactions.show', $tx) }}" class="btn btn-sm btn-secondary"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('transactions.receipt', $tx) }}" class="btn btn-sm btn-info" target="_blank"><i class="fas fa-print"></i></a>
-                                    @if($tx->status !== 'refunded')
-                                        <form action="{{ route('transactions.refund', $tx) }}" method="POST" style="display:inline-block;">
-                                            @csrf
-                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Proses pengembalian untuk transaksi ini?')"><i class="fas fa-undo"></i></button>
-                                        </form>
-                                    @endif
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center">Belum ada transaksi.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tanggal</th>
+                    <th>Pelanggan</th>
+                    <th>Total</th>
+                    <th>Metode</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($transactions as $t)
+                <tr>
+                    <td>#{{ $t->transaction_number ?? $t->id }}</td>
+                    <td>{{ optional($t->created_at)->format('d M Y H:i') }}</td>
+                    <td>{{ $t->pelanggan->nama ?? $t->customer_name ?? 'Umum' }}</td>
+                    <td class="text-end">Rp {{ number_format($t->total ?? 0, 0, ',', '.') }}</td>
+                    <td>{{ ucfirst($t->payment_method ?? ($t->metode_bayar ?? '')) }}</td>
+                    <td>
+                        <span class="badge bg-{{ $t->status === 'completed' ? 'success' : ($t->status === 'refunded' ? 'warning' : 'secondary') }}">{{ $t->status }}</span>
+                    </td>
+                    <td>
+                        <a href="{{ route('transactions.show', $t) }}" class="btn btn-info btn-sm text-white">
+                            Detail
+                        </a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-            <div class="mt-3">
-                {{ $transactions->links() }}
-            </div>
-        </div>
+        {{ $transactions->links() }}
     </div>
+</div>
 @endsection

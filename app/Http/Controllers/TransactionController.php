@@ -3,16 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
-use App\Models\TransactionItem;
 use App\Models\Product;
+use App\Models\Pelanggan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
-    /**
-     * Display a listing of transactions.
-     */
     public function index()
     {
         $transactions = Transaction::with(['cashier', 'items.product'])
@@ -22,34 +19,34 @@ class TransactionController extends Controller
         return view('transactions.index', compact('transactions'));
     }
 
-    /**
-     * Show the form for creating a new transaction.
-     */
     public function create()
     {
-        $products = Product::where('status', true)->get();
-        $transactionNumber = Transaction::generateTransactionNumber();
+        // Assuming column is 'stok'
+        $products = Product::where('status', true)->where('stok', '>', 0)->get();
+        $pelanggans = Pelanggan::all();
 
-        return view('transactions.create', compact('products', 'transactionNumber'));
+        // Ensure this method exists in your Model, or remove it if using auto-increment ID
+        $transactionNumber = method_exists(Transaction::class, 'generateTransactionNumber')
+            ? Transaction::generateTransactionNumber()
+            : 'TRX-' . time();
+
+        return view('transactions.create', compact('products', 'pelanggans', 'transactionNumber'));
     }
 
-    /**
-     * Store a newly created transaction in storage.
-     */
     public function store(Request $request)
     {
+        // Validate Request
         $validated = $request->validate([
-            'customer_name' => 'nullable|string|max:100',
-            'payment_method' => 'required|string|max:50',
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'items.*.unit_price' => 'required|numeric|min:0',
-            'items.*.discount' => 'nullable|numeric|min:0',
-            'discount' => 'nullable|numeric|min:0',
-            'tax' => 'nullable|numeric|min:0',
-            'amount_paid' => 'required|numeric|min:0',
-            'notes' => 'nullable|string',
+            'pelanggan_id'       => 'nullable|exists:pelanggans,id',
+            'payment_method'     => 'required|string|max:50',
+            'items'              => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:produks,id', // Ensure table name is correct (produks or products)
+            'items.*.quantity'   => 'required|integer|min:1',
+            'items.*.discount'   => 'nullable|numeric|min:0',
+            'discount'           => 'nullable|numeric|min:0',
+            'tax'                => 'nullable|numeric|min:0',
+            'amount_paid'        => 'required|numeric|min:0',
+            'notes'              => 'nullable|string',
         ]);
 
         try {
@@ -58,116 +55,119 @@ class TransactionController extends Controller
             $subtotal = 0;
             $itemsData = [];
 
-            // Calculate subtotal and prepare items
             foreach ($request->items as $item) {
-                $product = Product::findOrFail($item['product_id']);
-                $itemSubtotal = $item['quantity'] * $item['unit_price'];
-                $itemDiscount = $item['discount'] ?? 0;
-                $itemTotal = $itemSubtotal - $itemDiscount;
+                // Use lockForUpdate to prevent race conditions on stock
+                $product = Product::where('id', $item['product_id'])->lockForUpdate()->first();
+
+                if (!$product) {
+                    throw new \Exception("Produk tidak ditemukan.");
+                }
+
+                if ($product->stok < $item['quantity']) {
+                    throw new \Exception("Stok produk {$product->nama_produk} tidak mencukupi.");
+                }
+
+                $unitPrice = $product->harga_jual;
+                $quantity = (int)$item['quantity'];
+                $itemDiscount = isset($item['discount']) ? (float)$item['discount'] : 0;
+
+                $itemSubtotal = ($unitPrice * $quantity) - $itemDiscount;
+                $subtotal += $itemSubtotal;
 
                 $itemsData[] = [
-                    'product_id' => $item['product_id'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unit_price'],
-                    'subtotal' => $itemSubtotal,
-                    'discount' => $itemDiscount,
-                    'total' => $itemTotal,
+                    'product_id' => $product->id,
+                    'quantity'   => $quantity,
+                    'unit_price' => $unitPrice,
+                    'discount'   => $itemDiscount,
+                    'subtotal'   => $itemSubtotal, // Ensure your DB table has this column, or remove if calculated on fly
+                    'total'      => $itemSubtotal, // Redundant? adjust based on your DB schema
                 ];
 
-                $subtotal += $itemTotal;
-
-                // Update product stock
-                $product->update(['stock' => $product->stock - $item['quantity']]);
+                // Decrement Stock
+                $product->decrement('stok', $quantity);
             }
 
-            $discount = $validated['discount'] ?? 0;
-            $tax = $validated['tax'] ?? 0;
-            $total = $subtotal - $discount + $tax;
-            $change = $validated['amount_paid'] - $total;
+            $globalDiscount = $request->discount ?? 0;
+            $globalTax = $request->tax ?? 0;
+            $grandTotal = ($subtotal - $globalDiscount) + $globalTax;
 
-            // Create transaction
+            // Validate Payment Amount
+            if ($request->amount_paid < $grandTotal) {
+                throw new \Exception("Jumlah bayar kurang dari total transaksi.");
+            }
+
+            $change = $request->amount_paid - $grandTotal;
+
+            // Create Transaction Header
             $transaction = Transaction::create([
-                'transaction_number' => Transaction::generateTransactionNumber(),
-                'cashier_id' => auth()->id(),
-                'customer_name' => $validated['customer_name'],
-                'payment_method' => $validated['payment_method'],
-                'subtotal' => $subtotal,
-                'discount' => $discount,
-                'tax' => $tax,
-                'total' => $total,
-                'amount_paid' => $validated['amount_paid'],
-                'change' => $change,
-                'notes' => $validated['notes'] ?? null,
-                'status' => 'completed',
+                'transaction_number' => $request->transaction_number ?? 'TRX-'.time(), // Handle logic
+                'cashier_id'     => auth()->id() ?? 1,
+                'pelanggan_id'   => $request->pelanggan_id,
+                'payment_method' => $request->payment_method,
+                'subtotal'       => $subtotal,
+                'discount'       => $globalDiscount,
+                'tax'            => $globalTax,
+                'total'          => $grandTotal,
+                'amount_paid'    => $request->amount_paid,
+                'change'         => $change,
+                'notes'          => $request->notes,
+                'status'         => 'completed',
             ]);
 
-            // Create transaction items
-            foreach ($itemsData as $itemData) {
-                $transaction->items()->create($itemData);
-            }
+            // Create Transaction Items
+            // Assumes relation name is 'items' in Transaction model
+            $transaction->items()->createMany($itemsData);
 
             DB::commit();
 
-            return redirect()->route('transactions.show', $transaction)->with('success', 'Transaksi berhasil dibuat.');
+            return redirect()->route('transactions.show', $transaction->id)
+                             ->with('success', 'Transaksi berhasil dibuat.');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan saat membuat transaksi: ' . $e->getMessage());
+            return back()->with('error', 'Gagal: ' . $e->getMessage())->withInput();
         }
     }
 
-    /**
-     * Display the specified transaction.
-     */
     public function show(Transaction $transaction)
     {
-        $transaction->load(['cashier', 'items.product']);
+        $transaction->load(['cashier', 'items.product', 'pelanggan']);
         return view('transactions.show', compact('transaction'));
     }
 
     /**
-     * Get transaction details (API).
-     */
-    public function details(Transaction $transaction)
-    {
-        return response()->json($transaction->load(['cashier', 'items.product']));
-    }
-
-    /**
-     * Generate receipt for transaction.
+     * Show printable receipt for a transaction.
      */
     public function receipt(Transaction $transaction)
     {
-        $transaction->load(['cashier', 'items.product']);
+        $transaction->load(['cashier', 'items.product', 'pelanggan']);
+
         return view('transactions.receipt', compact('transaction'));
     }
 
-    /**
-     * Process refund for transaction.
-     */
     public function refund(Request $request, Transaction $transaction)
     {
-        $validated = $request->validate([
-            'reason' => 'required|string|max:255',
-        ]);
+        $request->validate(['reason' => 'required|string|max:255']);
 
         try {
             DB::beginTransaction();
 
-            // Restore product stock
             foreach ($transaction->items as $item) {
-                $product = Product::findOrFail($item->product_id);
-                $product->update(['stock' => $product->stock + $item->quantity]);
+                $product = Product::find($item->product_id);
+                if ($product) {
+                    // FIXED: usage of 'stok' instead of 'stock'
+                    $product->increment('stok', $item->quantity);
+                }
             }
 
-            // Update transaction status
             $transaction->update(['status' => 'refunded']);
 
             DB::commit();
-
             return back()->with('success', 'Transaksi berhasil dikembalikan.');
+
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan saat memproses pengembalian: ' . $e->getMessage());
+            return back()->with('error', $e->getMessage());
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -12,7 +13,13 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::paginate(20);
+        $products = Product::with('kategori')
+            ->when(request('search'), function ($query) {
+                $search = request('search');
+                $query->where('nama_produk', 'like', "%{$search}%")
+                    ->orWhere('kode_barcode', 'like', "%{$search}%");
+            })
+            ->paginate(20);
         return view('products.index', compact('products'));
     }
 
@@ -21,7 +28,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.create');
+        $kategoris = Kategori::active()->orderBy('nama_kategori')->get();
+        return view('products.create', compact('kategoris'));
     }
 
     /**
@@ -30,14 +38,14 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'sku' => 'required|string|max:50|unique:products',
-            'description' => 'nullable|string',
-            'category' => 'required|string|max:50',
-            'price' => 'required|numeric|min:0',
-            'cost' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'min_stock' => 'required|integer|min:0',
+            'nama_produk' => 'required|string|max:255',
+            'kode_barcode' => 'required|string|max:255|unique:produks',
+            'kategori_id' => 'required|exists:kategoris,kategori_id',
+            'harga_beli' => 'required|numeric|min:0',
+            'harga_jual' => 'required|numeric|min:0',
+            'stok' => 'required|integer|min:0',
+            'satuan' => 'nullable|string|max:50',
+            'deskripsi' => 'nullable|string',
             'status' => 'boolean',
         ]);
 
@@ -53,6 +61,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        $product->load('kategori');
         return view('products.show', compact('product'));
     }
 
@@ -61,7 +70,9 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        return view('products.edit', compact('product'));
+        $kategoris = Kategori::active()->orderBy('nama_kategori')->get();
+        $product->load('kategori');
+        return view('products.edit', compact('product', 'kategoris'));
     }
 
     /**
@@ -70,14 +81,14 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'sku' => 'required|string|max:50|unique:products,sku,' . $product->id,
-            'description' => 'nullable|string',
-            'category' => 'required|string|max:50',
-            'price' => 'required|numeric|min:0',
-            'cost' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'min_stock' => 'required|integer|min:0',
+            'nama_produk' => 'required|string|max:255',
+            'kode_barcode' => 'required|string|max:255|unique:produks,kode_barcode,' . $product->id,
+            'kategori_id' => 'required|exists:kategoris,kategori_id',
+            'harga_beli' => 'required|numeric|min:0',
+            'harga_jual' => 'required|numeric|min:0',
+            'stok' => 'required|integer|min:0',
+            'satuan' => 'nullable|string|max:50',
+            'deskripsi' => 'nullable|string',
             'status' => 'boolean',
         ]);
 
@@ -85,7 +96,7 @@ class ProductController extends Controller
 
         $product->update($validated);
 
-        return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui.');
+        return redirect()->route('products.show', $product)->with('success', 'Produk berhasil diubah.');
     }
 
     /**

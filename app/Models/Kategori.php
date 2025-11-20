@@ -3,12 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Kategori extends Model
 {
-    use SoftDeletes;
-
     protected $table = 'kategoris';
     protected $primaryKey = 'kategori_id';
     public $timestamps = true;
@@ -31,7 +28,7 @@ class Kategori extends Model
      */
     public function scopeActive($query)
     {
-        return $query->whereNull('deleted_at');
+        return $query;
     }
 
     /**

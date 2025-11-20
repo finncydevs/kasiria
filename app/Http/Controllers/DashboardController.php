@@ -22,7 +22,9 @@ class DashboardController extends Controller
         $totalSales = Transaction::whereDate('created_at', $today)->sum('total');
         $transactionCount = Transaction::whereDate('created_at', $today)->count();
         $totalUsers = User::where('status', true)->count();
-        $lowStockProducts = Product::where('stock', '<=', 'min_stock')->count();
+    // Default minimum stock threshold (produks table doesn't have min_stock column)
+    $minStockThreshold = 10;
+    $lowStockProducts = Product::where('stok', '<=', $minStockThreshold)->count();
 
         // Monthly sales trend
         $monthlySales = Transaction::whereDate('created_at', '>=', $thisMonth)
@@ -49,8 +51,8 @@ class DashboardController extends Controller
             ->get();
 
         // Low stock products
-        $lowStockList = Product::where('stock', '<=', 'min_stock')
-            ->orderBy('stock', 'asc')
+        $lowStockList = Product::where('stok', '<=', $minStockThreshold)
+            ->orderBy('stok', 'asc')
             ->take(5)
             ->get();
 

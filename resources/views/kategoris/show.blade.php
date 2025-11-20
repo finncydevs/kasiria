@@ -96,7 +96,8 @@
                             <div class="text-center">
                                 <h3 class="text-success fw-bold">
                                     @php
-                                        $totalStock = $kategori->products()->sum('stock');
+                                        // produk table uses 'stok' column
+                                        $totalStock = $kategori->products()->sum('stok');
                                     @endphp
                                     {{ $totalStock }}
                                 </h3>
@@ -131,14 +132,16 @@
                 <tbody>
                     @forelse ($products as $product)
                         <tr>
-                            <td class="fw-bold">{{ $product->sku }}</td>
-                            <td>{{ $product->name }}</td>
-                            <td>Rp {{ number_format($product->price, 0, ',', '.') }}</td>
+                            <td class="fw-bold">{{ $product->kode_barcode ?? $product->sku }}</td>
+                            <td>{{ $product->nama_produk ?? $product->name }}</td>
+                            <td>Rp {{ number_format($product->harga_jual ?? $product->price ?? 0, 0, ',', '.') }}</td>
                             <td>
-                                @if ($product->stock <= $product->min_stock)
-                                    <span class="badge bg-warning">{{ $product->stock }}</span>
+                                @php $stok = $product->stok ?? $product->stock ?? 0; @endphp
+                                @php $min = $product->min_stock ?? 0; @endphp
+                                @if ($stok <= $min)
+                                    <span class="badge bg-warning">{{ $stok }}</span>
                                 @else
-                                    <span class="badge bg-success">{{ $product->stock }}</span>
+                                    <span class="badge bg-success">{{ $stok }}</span>
                                 @endif
                             </td>
                             <td>

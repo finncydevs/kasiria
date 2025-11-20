@@ -20,10 +20,10 @@
                     <p>{{ $product->description }}</p>
 
                     <ul class="list-unstyled">
-                        <li><strong>Harga:</strong> Rp {{ number_format($product->price, 0, ',', '.') }}</li>
-                        <li><strong>Harga Pokok:</strong> Rp {{ number_format($product->cost, 0, ',', '.') }}</li>
-                        <li><strong>Stok:</strong> {{ $product->stock }}</li>
-                        <li><strong>Stok Minimum:</strong> {{ $product->min_stock }}</li>
+                        <li><strong>Harga:</strong> Rp {{ number_format($product->harga_jual ?? $product->price ?? 0, 0, ',', '.') }}</li>
+                        <li><strong>Harga Pokok:</strong> Rp {{ number_format($product->harga_beli ?? $product->cost ?? 0, 0, ',', '.') }}</li>
+                        <li><strong>Stok:</strong> {{ $product->stok ?? $product->stock ?? 0 }}</li>
+                        <li><strong>Stok Minimum:</strong> {{ $product->min_stock ?? 0 }}</li>
                         <li><strong>Status:</strong> @if($product->status) <span class="badge bg-success">Aktif</span> @else <span class="badge bg-secondary">Nonaktif</span> @endif</li>
                     </ul>
                 </div>

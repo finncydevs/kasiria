@@ -4,36 +4,46 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    protected $table = 'produks';
+    public $timestamps = true;
 
     protected $fillable = [
-        'name',
-        'sku',
-        'description',
-        'category',
-        'price',
-        'cost',
-        'stock',
-        'min_stock',
+        'nama_produk',
+        'kode_barcode',
+        'kategori_id',
+        'harga_beli',
+        'harga_jual',
+        'stok',
+        'satuan',
+        'deskripsi',
         'status',
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
-        'cost' => 'decimal:2',
+        'harga_beli' => 'decimal:2',
+        'harga_jual' => 'decimal:2',
         'status' => 'boolean',
     ];
+
+    /**
+     * Get the category for this product.
+     */
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'kategori_id', 'kategori_id');
+    }
 
     /**
      * Get the transactions for this product.
      */
     public function transactionItems()
     {
-        return $this->hasMany(TransactionItem::class);
+        return $this->hasMany(TransactionItem::class, 'product_id', 'id');
     }
 
     /**
@@ -41,7 +51,7 @@ class Product extends Model
      */
     public function isLowStock()
     {
-        return $this->stock <= $this->min_stock;
+        return $this->stok <= 10; // Default minimum
     }
 
     /**
@@ -49,8 +59,8 @@ class Product extends Model
      */
     public function getProfitMargin()
     {
-        if ($this->cost == 0) return 0;
-        return (($this->price - $this->cost) / $this->cost) * 100;
+        if ($this->harga_beli == 0) return 0;
+        return (($this->harga_jual - $this->harga_beli) / $this->harga_beli) * 100;
     }
 
     /**
@@ -64,8 +74,8 @@ class Product extends Model
     /**
      * Scope by category.
      */
-    public function scopeByCategory($query, $category)
+    public function scopeByKategori($query, $kategoriId)
     {
-        return $query->where('category', $category);
+        return $query->where('kategori_id', $kategoriId);
     }
 }
