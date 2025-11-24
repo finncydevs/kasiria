@@ -154,8 +154,16 @@
                     <textarea name="notes" class="form-control" rows="2"></textarea>
                 </div>
 
+                <!-- Hidden field to track payment option -->
+                <input type="hidden" id="payment_option" name="payment_option" value="save_only">
+
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Simpan Transaksi</button>
+                    <button type="submit" class="btn btn-primary" onclick="document.getElementById('payment_option').value='save_only'">
+                        <i class="fas fa-save"></i> Simpan Transaksi
+                    </button>
+                    <button type="submit" class="btn btn-success" onclick="document.getElementById('payment_option').value='pay_now'">
+                        <i class="fas fa-credit-card"></i> Bayar & Simpan
+                    </button>
                     <a href="{{ route('transactions.index') }}" class="btn btn-secondary">Batal</a>
                 </div>
             </form>

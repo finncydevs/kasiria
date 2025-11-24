@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\Auth\AuthController;
@@ -67,6 +68,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('transactions/{transaction}/receipt', [TransactionController::class, 'receipt'])->name('transactions.receipt');
     Route::post('transactions/{transaction}/refund', [TransactionController::class, 'refund'])->name('transactions.refund');
     Route::get('transactions/{transaction}/details', [TransactionController::class, 'details'])->name('transactions.details');
+
+    // Payment (Midtrans)
+    Route::get('payment/{transaction}/snap', [PaymentController::class, 'showSnap'])->name('payment.snap');
+    Route::post('payment/create', [PaymentController::class, 'createPayment'])->name('payment.create');
+    Route::post('payment/callback', [PaymentController::class, 'handleCallback'])->name('payment.callback');
+    Route::post('payment/{transaction}/cancel', [PaymentController::class, 'cancelPayment'])->name('payment.cancel');
 
     // Reports (Admin Only)
     Route::middleware(['admin'])->group(function () {

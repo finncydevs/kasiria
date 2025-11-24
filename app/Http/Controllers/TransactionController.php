@@ -39,6 +39,7 @@ class TransactionController extends Controller
         $validated = $request->validate([
             'pelanggan_id'       => 'nullable|exists:pelanggans,id',
             'payment_method'     => 'required|string|max:50',
+            'payment_option'     => 'required|in:save_only,pay_now', // New: choose save or pay now
             'items'              => 'required|array|min:1',
             'items.*.product_id' => 'required|exists:produks,id', // Ensure table name is correct (produks or products)
             'items.*.quantity'   => 'required|integer|min:1',
@@ -108,10 +109,10 @@ class TransactionController extends Controller
                 'discount'       => $globalDiscount,
                 'tax'            => $globalTax,
                 'total'          => $grandTotal,
-                'amount_paid'    => $request->amount_paid,
-                'change'         => $change,
+                'amount_paid'    => $validated['payment_option'] === 'pay_now' ? 0 : $request->amount_paid,
+                'change'         => $validated['payment_option'] === 'pay_now' ? 0 : $change,
                 'notes'          => $request->notes,
-                'status'         => 'completed',
+                'status'         => $validated['payment_option'] === 'pay_now' ? 'pending' : 'completed',
             ]);
 
             // Create Transaction Items
@@ -119,6 +120,12 @@ class TransactionController extends Controller
             $transaction->items()->createMany($itemsData);
 
             DB::commit();
+
+            // If pay_now, redirect to payment page
+            if ($validated['payment_option'] === 'pay_now') {
+                return redirect()->route('payment.snap', $transaction->id)
+                                 ->with('success', 'Silakan lanjutkan pembayaran.');
+            }
 
             return redirect()->route('transactions.show', $transaction->id)
                              ->with('success', 'Transaksi berhasil dibuat.');
