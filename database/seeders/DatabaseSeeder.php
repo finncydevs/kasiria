@@ -163,5 +163,14 @@ class DatabaseSeeder extends Seeder
             'no_hp' => '085544332211',
             'status' => true,
         ]);
+        User::factory()->create([
+            'nama' => 'Pelanggan Setia',
+            'username' => 'pelanggan',
+            'email' => 'pelanggan@kasiria.com',
+            'role' => 'pelanggan',
+            'password' => bcrypt('password'),
+            'points' => 1500, // Silver Member
+            'status' => true,
+        ]);
     }
 }
