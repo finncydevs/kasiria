@@ -13,6 +13,7 @@ class Transaction extends Model
     protected $fillable = [
         'transaction_number',
         'cashier_id',
+        'customer_user_id',
         'pelanggan_id',
         'customer_name',
         'payment_method',
@@ -41,6 +42,14 @@ class Transaction extends Model
     public function cashier()
     {
         return $this->belongsTo(User::class, 'cashier_id');
+    }
+
+    /**
+     * Get the registered customer (user) for this transaction.
+     */
+    public function customerUser()
+    {
+        return $this->belongsTo(User::class, 'customer_user_id');
     }
 
     /**

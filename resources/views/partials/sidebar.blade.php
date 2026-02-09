@@ -14,13 +14,32 @@
 
     <ul class="sidebar-menu">
         <li class="sidebar-menu-title">Menu Utama</li>
+        {{-- Dashboard: Hide for Pelanggan, they have their own menu below or mapped differently --}}
+        @if ($user->role !== 'pelanggan')
         <li>
-            {{-- Dashboard dapat diakses oleh semua role --}}
             <a href="{{ route('dashboard') }}" class="@if(request()->routeIs('dashboard')) active @endif">
                 <i class="fas fa-home"></i>
                 Dashboard
             </a>
         </li>
+        @endif
+
+        {{-- Start Pelanggan Menu --}}
+        @if ($user->role === 'pelanggan')
+        <li>
+            <a href="{{ route('pelanggan.dashboard') }}" class="@if(request()->routeIs('pelanggan.dashboard')) active @endif">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+        </li>
+        <li>
+            <a href="{{ route('pelanggan.order') }}" class="@if(request()->routeIs('pelanggan.order')) active @endif">
+                <i class="fas fa-shopping-cart"></i>
+                Order Produk
+            </a>
+        </li>
+        @endif
+        {{-- End Pelanggan Menu --}}
 
         {{-- Pengguna: Hanya untuk Admin dan Owner --}}
         @if ($user->role === 'admin' )

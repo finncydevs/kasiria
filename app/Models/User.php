@@ -22,7 +22,8 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'role',
+        'password',
+        'role', // admin, kasir, owner, pelanggan
         'no_hp',
         'status',
         'points',
@@ -115,6 +116,22 @@ class User extends Authenticatable
     public function isCashier()
     {
         return $this->role === 'kasir';
+    }
+
+    /**
+     * Check if user is pelanggan.
+     */
+    public function isPelanggan()
+    {
+        return $this->role === 'pelanggan';
+    }
+
+    /**
+     * Get orders made by this user (pelanggan).
+     */
+    public function orders()
+    {
+        return $this->hasMany(Transaction::class, 'customer_user_id');
     }
 
     /**

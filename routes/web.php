@@ -11,11 +11,15 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\PelangganDashboardController;
 use App\Http\Controllers\KategoriController;
 
 // Public Routes
 Route::get('/', function () {
     if (auth()->check()) {
+        if (auth()->user()->isPelanggan()) {
+            return redirect()->route('pelanggan.dashboard');
+        }
         return redirect()->route('dashboard');
     }
     return redirect()->route('login');
@@ -87,4 +91,11 @@ Route::middleware(['auth'])->group(function () {
     // Profile & Account
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Customer Area
+    Route::prefix('customer')->name('pelanggan.')->group(function () {
+        Route::get('/dashboard', [PelangganDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/order', [PelangganDashboardController::class, 'order'])->name('order');
+        Route::post('/order', [PelangganDashboardController::class, 'storeOrder'])->name('storeOrder');
+    });
 });

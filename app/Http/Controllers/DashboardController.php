@@ -15,6 +15,10 @@ class DashboardController extends Controller
      */
     public function index()
     {
+        if (auth()->user()->isPelanggan()) {
+            return redirect()->route('pelanggan.dashboard');
+        }
+
         $today = Carbon::today();
         $thisMonth = Carbon::now()->startOfMonth();
 

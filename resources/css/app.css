@@ -15,7 +15,7 @@
     --color-primary-glow: rgba(59, 130, 246, 0.5);
 }
 
-@layer utilities {
+@layer components {
     .glass {
         @apply backdrop-blur-md bg-white/10 border border-white/20 shadow-lg;
     }
