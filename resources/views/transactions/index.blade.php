@@ -30,6 +30,22 @@
         </div>
     </div>
 
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-6 border-b border-white/10 overflow-x-auto">
+        <a href="{{ route('transactions.index') }}" 
+           class="px-4 py-2 text-sm font-medium border-b-2 transition-colors {{ !request('status') ? 'border-blue-500 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-200' }}">
+           Semua
+        </a>
+        <a href="{{ route('transactions.index', ['status' => 'pending']) }}" 
+           class="px-4 py-2 text-sm font-medium border-b-2 transition-colors {{ request('status') == 'pending' ? 'border-yellow-500 text-yellow-400 bg-yellow-500/5' : 'border-transparent text-slate-400 hover:text-slate-200' }}">
+           <i class="fas fa-clock mr-1"></i> Pesanan Masuk
+        </a>
+        <a href="{{ route('transactions.index', ['status' => 'completed']) }}" 
+           class="px-4 py-2 text-sm font-medium border-b-2 transition-colors {{ request('status') == 'completed' ? 'border-green-500 text-green-400' : 'border-transparent text-slate-400 hover:text-slate-200' }}">
+           Riwayat Selesai
+        </a>
+    </div>
+
     @if(session('success'))
         <div class="mb-6 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-2">
             <i class="fas fa-check-circle"></i> {{ session('success') }}

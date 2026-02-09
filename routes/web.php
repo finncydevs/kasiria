@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
         // Transactions (Sales)
         Route::resource('transactions', TransactionController::class);
         Route::get('transactions/{transaction}/receipt', [TransactionController::class, 'receipt'])->name('transactions.receipt');
+        Route::post('transactions/{transaction}/approve', [TransactionController::class, 'approve'])->name('transactions.approve');
         Route::post('transactions/{transaction}/refund', [TransactionController::class, 'refund'])->name('transactions.refund');
         Route::get('transactions/{transaction}/details', [TransactionController::class, 'details'])->name('transactions.details');
 

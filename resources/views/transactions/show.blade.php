@@ -28,6 +28,14 @@
                 <a href="{{ route('transactions.receipt', $transaction) }}" class="glass-btn text-sm px-4 py-2 flex items-center gap-2" target="_blank">
                     <i class="fas fa-print"></i> Struk
                 </a>
+                @if($transaction->status === 'pending')
+                    <form action="{{ route('transactions.approve', $transaction) }}" method="POST" class="inline-block" onsubmit="return confirm('Proses dan selesaikan pesanan ini?')">
+                        @csrf
+                        <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/30 px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2">
+                            <i class="fas fa-check"></i> Proses Pesanan
+                        </button>
+                    </form>
+                @endif
                 @if($transaction->status !== 'refunded')
                     <form action="{{ route('transactions.refund', $transaction) }}" method="POST" class="inline-block" onsubmit="return confirm('Proses pengembalian untuk transaksi ini?')">
                         @csrf

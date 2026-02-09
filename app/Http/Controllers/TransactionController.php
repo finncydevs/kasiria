@@ -10,11 +10,18 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::with(['cashier', 'items.product'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $status = $request->query('status');
+
+        $query = Transaction::with(['cashier', 'items.product', 'pelanggan'])
+            ->orderBy('created_at', 'desc');
+
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        $transactions = $query->paginate(20);
 
         return view('transactions.index', compact('transactions'));
     }
