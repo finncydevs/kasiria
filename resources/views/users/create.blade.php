@@ -32,7 +32,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Nama Lengkap</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-user"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-user"></i></span>
                             <input type="text" name="nama" class="glass-input w-full pl-10 @error('nama') border-red-500/50 @enderror" placeholder="Masukkan nama lengkap" value="{{ old('nama') }}" required>
                         </div>
                         @error('nama')
@@ -43,7 +43,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Username</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-at"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-at"></i></span>
                             <input type="text" name="username" class="glass-input w-full pl-10 @error('username') border-red-500/50 @enderror" placeholder="username123" value="{{ old('username') }}" required>
                         </div>
                         @error('username')
@@ -54,7 +54,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Email</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-envelope"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-envelope"></i></span>
                             <input type="email" name="email" class="glass-input w-full pl-10 @error('email') border-red-500/50 @enderror" placeholder="user@example.com" value="{{ old('email') }}" required>
                         </div>
                         @error('email')
@@ -65,7 +65,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">No HP</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-phone"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-phone"></i></span>
                             <input type="text" name="no_hp" class="glass-input w-full pl-10 @error('no_hp') border-red-500/50 @enderror" placeholder="081234567890" value="{{ old('no_hp') }}">
                         </div>
                         @error('no_hp')
@@ -76,7 +76,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Role</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-shield-alt"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-shield-alt"></i></span>
                             <select name="role" class="glass-input w-full pl-10 @error('role') border-red-500/50 @enderror" required>
                                 <option value="" class="text-slate-800">-- Pilih Role --</option>
                                 <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }} class="text-slate-800">Admin</option>
@@ -93,7 +93,7 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-400 mb-1">Password</label>
                             <div class="relative">
-                                <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-lock"></i></span>
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-lock"></i></span>
                                 <input type="password" name="password" class="glass-input w-full pl-10 @error('password') border-red-500/50 @enderror" placeholder="Minimal 8 karakter" required>
                             </div>
                             @error('password')
@@ -103,7 +103,7 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-400 mb-1">Konfirmasi Password</label>
                             <div class="relative">
-                                <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-lock-open"></i></span>
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-lock-open"></i></span>
                                 <input type="password" name="password_confirmation" class="glass-input w-full pl-10" placeholder="Ketik ulang password" required>
                             </div>
                         </div>

@@ -35,7 +35,7 @@
         <div class="mb-6 glass-panel bg-white/5 !p-4">
             <form action="{{ route('products.index') }}" method="GET" class="flex flex-col md:flex-row gap-3">
                 <div class="relative flex-1">
-                    <i class="fas fa-search absolute left-3 top-3 text-slate-400"></i>
+                    <i class="fas fa-search absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"></i>
                     <input type="text" name="search" class="glass-input w-full pl-10" placeholder="Cari nama produk atau barcode..." value="{{ request('search') }}">
                 </div>
                 <div class="flex gap-2">

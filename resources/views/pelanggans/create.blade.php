@@ -1,152 +1,125 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
-@section('title', 'Tambah Pelanggan')
+@section('title', 'Tambah Pelanggan - Kasiria')
+@section('page_title', 'Tambah Pelanggan')
+
+@section('breadcrumb')
+    <li class="flex items-center">
+        <a href="{{ route('dashboard') }}" class="hover:text-blue-400 transition-colors">Dashboard</a>
+        <i class="fas fa-chevron-right text-xs mx-2"></i>
+    </li>
+    <li class="flex items-center">
+        <a href="{{ route('pelanggans.index') }}" class="hover:text-blue-400 transition-colors">Pelanggan</a>
+        <i class="fas fa-chevron-right text-xs mx-2"></i>
+    </li>
+    <li class="flex items-center text-slate-200">
+        Tambah
+    </li>
+@endsection
 
 @section('content')
-<div class="container-fluid">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('pelanggans.index') }}">Data Pelanggan</a></li>
-            <li class="breadcrumb-item active">Tambah Pelanggan</li>
-        </ol>
-    </nav>
-
-    <!-- Header -->
-    <div class="mb-4">
-        <h1 class="h3 text-dark fw-bold">
-            <i class="fas fa-user-plus text-primary me-2"></i>Tambah Pelanggan Baru
-        </h1>
-    </div>
-
-    <!-- Form Card -->
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-body">
-                    <form action="{{ route('pelanggans.store') }}" method="POST">
-                        @csrf
-
-                        <!-- Nama -->
-                        <div class="mb-3">
-                            <label for="nama" class="form-label fw-bold">
-                                <i class="fas fa-user text-primary me-2"></i>Nama Pelanggan
-                            </label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror"
-                                id="nama" name="nama" placeholder="Masukkan nama pelanggan"
-                                value="{{ old('nama') }}" required>
-                            @error('nama')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 glass-panel">
+            <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
+                <i class="fas fa-user-plus text-blue-400"></i> Tambah Pelanggan Baru
+            </h2>
+            
+            <form action="{{ route('pelanggans.store') }}" method="POST">
+                @csrf
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Nama Pelanggan</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-user"></i></span>
+                            <input type="text" name="nama" class="glass-input w-full pl-10" placeholder="Nama Lengkap" value="{{ old('nama') }}" required>
                         </div>
+                        @error('nama')
+                            <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-bold">
-                                <i class="fas fa-envelope text-info me-2"></i>Email
-                            </label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                id="email" name="email" placeholder="contoh@email.com"
-                                value="{{ old('email') }}">
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- No HP -->
-                        <div class="mb-3">
-                            <label for="no_hp" class="form-label fw-bold">
-                                <i class="fas fa-phone text-success me-2"></i>No HP
-                            </label>
-                            <input type="text" class="form-control @error('no_hp') is-invalid @enderror"
-                                id="no_hp" name="no_hp" placeholder="08123456789"
-                                value="{{ old('no_hp') }}">
-                            @error('no_hp')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Alamat -->
-                        <div class="mb-3">
-                            <label for="alamat" class="form-label fw-bold">
-                                <i class="fas fa-map-marker-alt text-danger me-2"></i>Alamat
-                            </label>
-                            <textarea class="form-control @error('alamat') is-invalid @enderror"
-                                id="alamat" name="alamat" rows="3"
-                                placeholder="Masukkan alamat lengkap">{{ old('alamat') }}</textarea>
-                            @error('alamat')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Member Level -->
-                        <div class="mb-3">
-                            <label for="member_level" class="form-label fw-bold">
-                                <i class="fas fa-medal text-warning me-2"></i>Member Level
-                            </label>
-                            <select class="form-select @error('member_level') is-invalid @enderror"
-                                id="member_level" name="member_level">
-                                <option value="">-- Pilih Level --</option>
-                                <option value="Bronze" @if(old('member_level') === 'Bronze') selected @endif>Bronze</option>
-                                <option value="Silver" @if(old('member_level') === 'Silver') selected @endif>Silver</option>
-                                <option value="Gold" @if(old('member_level') === 'Gold') selected @endif>Gold</option>
-                                <option value="Platinum" @if(old('member_level') === 'Platinum') selected @endif>Platinum</option>
-                            </select>
-                            @error('member_level')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Status -->
-                        <div class="mb-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="status" name="status"
-                                    value="1" @if(old('status', true)) checked @endif>
-                                <label class="form-check-label fw-bold" for="status">
-                                    <i class="fas fa-check-circle text-success me-2"></i>Aktif
-                                </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Email</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-envelope"></i></span>
+                                <input type="email" name="email" class="glass-input w-full pl-10" placeholder="nama@email.com" value="{{ old('email') }}">
                             </div>
                         </div>
-
-                        <!-- Action Buttons -->
-                        <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Simpan
-                            </button>
-                            <a href="{{ route('pelanggans.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>Batal
-                            </a>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">No. HP</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-phone"></i></span>
+                                <input type="text" name="no_hp" class="glass-input w-full pl-10" placeholder="08..." value="{{ old('no_hp') }}">
+                            </div>
                         </div>
-                    </form>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Alamat</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-map-marker-alt"></i></span>
+                            <textarea name="alamat" rows="3" class="glass-input w-full pl-10" placeholder="Alamat lengkap...">{{ old('alamat') }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Member Level</label>
+                            <select name="member_level" class="glass-input w-full">
+                                <option value="">-- Pilih Level --</option>
+                                <option value="Bronze" {{ old('member_level') == 'Bronze' ? 'selected' : '' }}>Bronze</option>
+                                <option value="Silver" {{ old('member_level') == 'Silver' ? 'selected' : '' }}>Silver</option>
+                                <option value="Gold" {{ old('member_level') == 'Gold' ? 'selected' : '' }}>Gold</option>
+                                <option value="Platinum" {{ old('member_level') == 'Platinum' ? 'selected' : '' }}>Platinum</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-end mb-2">
+                             <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="status" value="1" class="sr-only peer" {{ old('status', true) ? 'checked' : '' }}>
+                                <div class="relative w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                <span class="ms-3 text-sm font-medium text-slate-300">Status Aktif</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-white/10 flex gap-3">
+                        <button type="submit" class="glass-btn bg-blue-600/80 hover:bg-blue-600 text-white px-6 py-2.5 shadow-lg shadow-blue-500/20">
+                            <i class="fas fa-save mr-2"></i> Simpan
+                        </button>
+                        <a href="{{ route('pelanggans.index') }}" class="glass-btn bg-white/5 hover:bg-white/10 text-slate-300 px-6 py-2.5">
+                            <i class="fas fa-times mr-2"></i> Batal
+                        </a>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
 
-        <!-- Info Card -->
-        <div class="col-lg-4">
-            <div class="card bg-light border-0">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">
-                        <i class="fas fa-info-circle text-info me-2"></i>Informasi
-                    </h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2">
-                            <strong>Member Level:</strong><br>
-                            <small class="text-muted">Bronze → Silver → Gold → Platinum</small>
-                        </li>
-                        <li class="mb-2">
-                            <strong>Status Aktif:</strong><br>
-                            <small class="text-muted">Pelanggan aktif dapat melakukan transaksi</small>
-                        </li>
-                        <li>
-                            <strong>Email & No HP:</strong><br>
-                            <small class="text-muted">Opsional, gunakan untuk kontak pelanggan</small>
-                        </li>
+        <div class="glass-panel h-fit bg-gradient-to-br from-blue-900/20 to-purple-900/20 border-blue-500/10">
+            <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-award text-yellow-400"></i> Informasi Member
+            </h3>
+            <div class="space-y-4 text-sm text-slate-300">
+                <div class="bg-white/5 p-3 rounded-lg border border-white/5">
+                    <p class="font-medium text-white mb-1"><i class="fas fa-info-circle mr-2 text-blue-400"></i>Keuntungan Member</p>
+                    <ul class="list-disc list-inside text-xs text-slate-400 pl-1 space-y-1">
+                        <li>Pengumpulan Poin (1 Poin tiap Rp 1.000)</li>
+                        <li>Diskon khusus member (Level Gold & Platinum)</li>
+                        <li>Riwayat belanja tersimpan</li>
                     </ul>
+                </div>
+                
+                <div class="bg-white/5 p-3 rounded-lg border border-white/5">
+                    <p class="font-medium text-white mb-1"><i class="fas fa-layer-group mr-2 text-purple-400"></i>Level Member</p>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <span class="text-xs px-2 py-1 rounded bg-orange-700/30 text-orange-400 border border-orange-700/50 text-center">Bronze</span>
+                        <span class="text-xs px-2 py-1 rounded bg-slate-400/30 text-slate-300 border border-slate-400/50 text-center">Silver</span>
+                        <span class="text-xs px-2 py-1 rounded bg-yellow-500/30 text-yellow-400 border border-yellow-500/50 text-center">Gold</span>
+                        <span class="text-xs px-2 py-1 rounded bg-slate-200/30 text-white border border-slate-200/50 text-center">Platinum</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection

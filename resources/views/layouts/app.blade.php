@@ -6,7 +6,6 @@
     <title>@yield('title', 'Kasiria - Admin Dashboard')</title>
     
     <!-- Fonts & Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -52,6 +51,16 @@
             <a href="{{ route('products.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('products.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
                 <i class="fas fa-box w-6 text-center"></i>
                 <span class="ml-2">Produk</span>
+            </a>
+
+            <a href="{{ route('kategoris.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('kategoris.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-tags w-6 text-center"></i>
+                <span class="ml-2">Kategori</span>
+            </a>
+
+            <a href="{{ route('pelanggans.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('pelanggans.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-user-friends w-6 text-center"></i>
+                <span class="ml-2">Pelanggan</span>
             </a>
 
             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2 px-3">Laporan</div>
@@ -168,7 +177,7 @@
             @yield('content')
         </main>
     </div>
-
+<script src="https://kit.fontawesome.com/e686fa0059.js" crossorigin="anonymous"></script>
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -185,5 +194,6 @@
     </script>
     
     @yield('scripts')
+    @stack('scripts')
 </body>
 </html>

@@ -33,7 +33,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Nama Lengkap</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-user"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-user"></i></span>
                             <input type="text" name="nama" class="glass-input w-full pl-10" value="{{ old('nama', $user->nama) }}" required>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Username</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-at"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-at"></i></span>
                             <input type="text" name="username" class="glass-input w-full pl-10" value="{{ old('username', $user->username) }}" required>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Email</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-envelope"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-envelope"></i></span>
                             <input type="email" name="email" class="glass-input w-full pl-10" value="{{ old('email', $user->email) }}" required>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">No HP</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-phone"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-phone"></i></span>
                             <input type="text" name="no_hp" class="glass-input w-full pl-10" value="{{ old('no_hp', $user->no_hp) }}">
                         </div>
                     </div>
@@ -65,7 +65,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Role</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-shield-alt"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-shield-alt"></i></span>
                             <select name="role" class="glass-input w-full pl-10" required>
                                 <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }} class="text-slate-800">Admin</option>
                                 <option value="kasir" {{ old('role', $user->role) === 'kasir' ? 'selected' : '' }} class="text-slate-800">Kasir</option>

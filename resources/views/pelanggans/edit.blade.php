@@ -1,159 +1,129 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
-@section('title', 'Edit Pelanggan')
+@section('title', 'Edit Pelanggan - Kasiria')
+@section('page_title', 'Edit Pelanggan')
+
+@section('breadcrumb')
+    <li class="flex items-center">
+        <a href="{{ route('dashboard') }}" class="hover:text-blue-400 transition-colors">Dashboard</a>
+        <i class="fas fa-chevron-right text-xs mx-2"></i>
+    </li>
+    <li class="flex items-center">
+        <a href="{{ route('pelanggans.index') }}" class="hover:text-blue-400 transition-colors">Pelanggan</a>
+        <i class="fas fa-chevron-right text-xs mx-2"></i>
+    </li>
+    <li class="flex items-center text-slate-200">
+        Edit
+    </li>
+@endsection
 
 @section('content')
-<div class="container-fluid">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('pelanggans.index') }}">Data Pelanggan</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('pelanggans.show', $pelanggan) }}">{{ $pelanggan->nama }}</a></li>
-            <li class="breadcrumb-item active">Edit</li>
-        </ol>
-    </nav>
-
-    <!-- Header -->
-    <div class="mb-4">
-        <h1 class="h3 text-dark fw-bold">
-            <i class="fas fa-edit text-primary me-2"></i>Edit Pelanggan: {{ $pelanggan->nama }}
-        </h1>
-    </div>
-
-    <!-- Form Card -->
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-body">
-                    <form action="{{ route('pelanggans.update', $pelanggan) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-
-                        <!-- Nama -->
-                        <div class="mb-3">
-                            <label for="nama" class="form-label fw-bold">
-                                <i class="fas fa-user text-primary me-2"></i>Nama Pelanggan
-                            </label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror"
-                                id="nama" name="nama" placeholder="Masukkan nama pelanggan"
-                                value="{{ old('nama', $pelanggan->nama) }}" required>
-                            @error('nama')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 glass-panel">
+            <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
+                <i class="fas fa-user-edit text-blue-400"></i> Edit Pelanggan
+            </h2>
+            
+            <form action="{{ route('pelanggans.update', $pelanggan) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Nama Pelanggan</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-user"></i></span>
+                            <input type="text" name="nama" class="glass-input w-full pl-10" value="{{ old('nama', $pelanggan->nama) }}" required>
                         </div>
+                        @error('nama')
+                            <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-bold">
-                                <i class="fas fa-envelope text-info me-2"></i>Email
-                            </label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                id="email" name="email" placeholder="contoh@email.com"
-                                value="{{ old('email', $pelanggan->email) }}">
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- No HP -->
-                        <div class="mb-3">
-                            <label for="no_hp" class="form-label fw-bold">
-                                <i class="fas fa-phone text-success me-2"></i>No HP
-                            </label>
-                            <input type="text" class="form-control @error('no_hp') is-invalid @enderror"
-                                id="no_hp" name="no_hp" placeholder="08123456789"
-                                value="{{ old('no_hp', $pelanggan->no_hp) }}">
-                            @error('no_hp')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Alamat -->
-                        <div class="mb-3">
-                            <label for="alamat" class="form-label fw-bold">
-                                <i class="fas fa-map-marker-alt text-danger me-2"></i>Alamat
-                            </label>
-                            <textarea class="form-control @error('alamat') is-invalid @enderror"
-                                id="alamat" name="alamat" rows="3"
-                                placeholder="Masukkan alamat lengkap">{{ old('alamat', $pelanggan->alamat) }}</textarea>
-                            @error('alamat')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Member Level -->
-                        <div class="mb-3">
-                            <label for="member_level" class="form-label fw-bold">
-                                <i class="fas fa-medal text-warning me-2"></i>Member Level
-                            </label>
-                            <select class="form-select @error('member_level') is-invalid @enderror"
-                                id="member_level" name="member_level">
-                                <option value="">-- Pilih Level --</option>
-                                <option value="Bronze" @if(old('member_level', $pelanggan->member_level) === 'Bronze') selected @endif>Bronze</option>
-                                <option value="Silver" @if(old('member_level', $pelanggan->member_level) === 'Silver') selected @endif>Silver</option>
-                                <option value="Gold" @if(old('member_level', $pelanggan->member_level) === 'Gold') selected @endif>Gold</option>
-                                <option value="Platinum" @if(old('member_level', $pelanggan->member_level) === 'Platinum') selected @endif>Platinum</option>
-                            </select>
-                            @error('member_level')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Status -->
-                        <div class="mb-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="status" name="status"
-                                    value="1" @if(old('status', $pelanggan->status)) checked @endif>
-                                <label class="form-check-label fw-bold" for="status">
-                                    <i class="fas fa-check-circle text-success me-2"></i>Aktif
-                                </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Email</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-envelope"></i></span>
+                                <input type="email" name="email" class="glass-input w-full pl-10" value="{{ old('email', $pelanggan->email) }}">
                             </div>
                         </div>
-
-                        <!-- Action Buttons -->
-                        <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Simpan Perubahan
-                            </button>
-                            <a href="{{ route('pelanggans.show', $pelanggan) }}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>Batal
-                            </a>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">No. HP</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-phone"></i></span>
+                                <input type="text" name="no_hp" class="glass-input w-full pl-10" value="{{ old('no_hp', $pelanggan->no_hp) }}">
+                            </div>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+                    </div>
 
-        <!-- Info Card -->
-        <div class="col-lg-4">
-            <div class="card bg-light border-0">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">
-                        <i class="fas fa-info-circle text-info me-2"></i>Informasi
-                    </h5>
-                    <div class="mb-3">
-                        <strong>Total Transaksi:</strong><br>
-                        <span class="badge bg-primary">{{ $pelanggan->getTotalTransactionsAttribute() }}</span>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Alamat</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-map-marker-alt"></i></span>
+                            <textarea name="alamat" rows="3" class="glass-input w-full pl-10">{{ old('alamat', $pelanggan->alamat) }}</textarea>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <strong>Total Belanja:</strong><br>
-                        <span class="badge bg-success">Rp {{ number_format($pelanggan->getTotalSpendingAttribute(), 0, ',', '.') }}</span>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Member Level</label>
+                            <select name="member_level" class="glass-input w-full">
+                                <option value="">-- Pilih Level --</option>
+                                <option value="Bronze" {{ old('member_level', $pelanggan->member_level) == 'Bronze' ? 'selected' : '' }}>Bronze</option>
+                                <option value="Silver" {{ old('member_level', $pelanggan->member_level) == 'Silver' ? 'selected' : '' }}>Silver</option>
+                                <option value="Gold" {{ old('member_level', $pelanggan->member_level) == 'Gold' ? 'selected' : '' }}>Gold</option>
+                                <option value="Platinum" {{ old('member_level', $pelanggan->member_level) == 'Platinum' ? 'selected' : '' }}>Platinum</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-end mb-2">
+                             <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="status" value="1" class="sr-only peer" {{ old('status', $pelanggan->status) ? 'checked' : '' }}>
+                                <div class="relative w-11 h-6 bg-slate-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                <span class="ms-3 text-sm font-medium text-slate-300">Status Aktif</span>
+                            </label>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <strong>Poin:</strong><br>
-                        <span class="badge bg-warning text-dark">{{ $pelanggan->poin }}</span>
-                    </div>
-                    <hr>
-                    <div class="d-grid">
-                        <a href="{{ route('pelanggans.reset-poin', $pelanggan) }}" class="btn btn-outline-warning btn-sm"
-                            onclick="return confirm('Yakin ingin mereset poin pelanggan ini?')">
-                            <i class="fas fa-redo me-2"></i>Reset Poin
+
+                    <div class="pt-4 border-t border-white/10 flex gap-3">
+                        <button type="submit" class="glass-btn bg-blue-600/80 hover:bg-blue-600 text-white px-6 py-2.5 shadow-lg shadow-blue-500/20">
+                            <i class="fas fa-save mr-2"></i> Simpan Perubahan
+                        </button>
+                        <a href="{{ route('pelanggans.index') }}" class="glass-btn bg-white/5 hover:bg-white/10 text-slate-300 px-6 py-2.5">
+                            <i class="fas fa-times mr-2"></i> Batal
                         </a>
                     </div>
                 </div>
+            </form>
+        </div>
+
+        <div class="glass-panel h-fit bg-gradient-to-br from-blue-900/20 to-purple-900/20 border-blue-500/10">
+            <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-chart-line text-blue-400"></i> Statistik Pelanggan
+            </h3>
+            <div class="space-y-4 text-sm text-slate-300">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/5 p-4 rounded-xl text-center border border-white/5">
+                        <span class="block text-2xl font-bold text-white mb-1">{{ $pelanggan->getTotalTransactionsAttribute() }}</span>
+                        <span class="text-xs text-slate-400 uppercase tracking-wide">Transaksi</span>
+                    </div>
+                    <div class="bg-white/5 p-4 rounded-xl text-center border border-white/5">
+                         <span class="block text-2xl font-bold text-yellow-400 mb-1">{{ $pelanggan->poin }}</span>
+                         <span class="text-xs text-slate-400 uppercase tracking-wide">Poin</span>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                    <span class="text-xs text-slate-400 uppercase tracking-wide block mb-1">Total Belanja</span>
+                    <span class="block text-xl font-bold text-emerald-400">Rp {{ number_format($pelanggan->getTotalSpendingAttribute(), 0, ',', '.') }}</span>
+                </div>
+                
+                <div class="pt-4 border-t border-white/10">
+                    <a href="{{ route('pelanggans.reset-poin', $pelanggan) }}" class="glass-btn bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 w-full text-center text-sm" onclick="return confirm('Yakin ingin mereset poin pelanggan ini?')">
+                        <i class="fas fa-redo mr-2"></i> Reset Poin
+                    </a>
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection

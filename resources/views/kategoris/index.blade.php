@@ -1,119 +1,100 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
-@section('title', 'Data Kategori')
+@section('title', 'Data Kategori - Kasiria')
+@section('page_title', 'Data Kategori')
+
+@section('breadcrumb')
+    <li class="flex items-center">
+        <a href="{{ route('dashboard') }}" class="hover:text-blue-400 transition-colors">Dashboard</a>
+        <i class="fas fa-chevron-right text-xs mx-2"></i>
+    </li>
+    <li class="flex items-center text-slate-200">
+        Kategori
+    </li>
+@endsection
 
 @section('content')
-<div class="container-fluid">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-            <li class="breadcrumb-item active">Data Kategori</li>
-        </ol>
-    </nav>
-
-    <!-- Header Section -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-dark fw-bold">
-            <i class="fas fa-tags text-primary me-2"></i>Data Kategori
-        </h1>
-        <a href="{{ route('kategoris.create') }}" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus me-2"></i>Tambah Kategori
-        </a>
-    </div>
-
-    <!-- Alerts -->
-    @if ($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Kesalahan!</strong>
-            <ul class="mb-0 ms-3">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
-
-    <!-- Filter Section -->
-    <div class="card card-body mb-3 bg-light">
-        <form method="GET" action="{{ route('kategoris.index') }}" class="row g-2">
-            <div class="col-md-6">
-                <input type="text" name="search" class="form-control form-control-sm"
-                    placeholder="Cari nama atau deskripsi kategori..."
-                    value="{{ request('search') }}">
+    <div class="glass-panel">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <div>
+                <h2 class="text-xl font-semibold text-white">Data Kategori</h2>
+                <p class="text-slate-400 text-sm mt-1">Kelola kategori produk untuk pengelompokan yang lebih baik.</p>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary btn-sm w-100">
-                    <i class="fas fa-search me-1"></i>Cari
-                </button>
-            </div>
-            <div class="col-md-4">
-                <a href="{{ route('kategoris.index') }}" class="btn btn-secondary btn-sm w-100">
-                    <i class="fas fa-redo me-1"></i>Reset
-                </a>
-            </div>
-        </form>
-    </div>
+            
+            <a href="{{ route('kategoris.create') }}" class="glass-btn flex items-center gap-2">
+                <i class="fas fa-plus"></i> <span>Tambah Kategori</span>
+            </a>
+        </div>
 
-    <!-- Table Section -->
-    <div class="card card-hover">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0">
-                <thead class="table-dark">
+        @if(session('success'))
+            <div class="mb-6 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-2">
+                <i class="fas fa-check-circle"></i> {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="mb-6 bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl flex items-center gap-2">
+                <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+            </div>
+        @endif
+
+        <div class="mb-6 glass-panel bg-white/5 !p-4">
+            <form method="GET" action="{{ route('kategoris.index') }}" class="flex flex-col md:flex-row gap-3">
+                <div class="relative flex-1">
+                    <i class="fas fa-search absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"></i>
+                    <input type="text" name="search" class="glass-input w-full pl-10" placeholder="Cari kategori..." value="{{ request('search') }}">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="glass-btn bg-blue-600/80 hover:bg-blue-600 text-white px-6">
+                        <i class="fas fa-search mr-2"></i> Cari
+                    </button>
+                    <a href="{{ route('kategoris.index') }}" class="glass-btn bg-white/5 hover:bg-white/10 text-slate-300 px-4">
+                        <i class="fas fa-redo"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-white/10">
+            <table class="w-full text-left">
+                <thead class="bg-white/5 text-xs text-slate-400 uppercase tracking-wider">
                     <tr>
-                        <th width="5%">No</th>
-                        <th>Nama Kategori</th>
-                        <th>Deskripsi</th>
-                        <th width="12%">Produk</th>
-                        <th width="15%">Aksi</th>
+                        <th class="p-4 w-16">No</th>
+                        <th class="p-4">Nama Kategori</th>
+                        <th class="p-4">Deskripsi</th>
+                        <th class="p-4 text-center">Jumlah Produk</th>
+                        <th class="p-4 text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse ($kategoris as $index => $kategori)
-                        <tr>
-                            <td>{{ ($kategoris->currentPage() - 1) * $kategoris->perPage() + $loop->iteration }}</td>
-                            <td class="fw-bold">{{ $kategori->nama_kategori }}</td>
-                            <td>
-                                @if ($kategori->deskripsi)
-                                    <small>{{ Str::limit($kategori->deskripsi, 50) }}</small>
-                                @else
-                                    <span class="text-muted">-</span>
-                                @endif
+                <tbody class="divide-y divide-white/5">
+                    @forelse($kategoris as $index => $kategori)
+                        <tr class="hover:bg-white/5 transition-colors group">
+                            <td class="p-4 text-slate-400 text-center">
+                                {{ ($kategoris->currentPage() - 1) * $kategoris->perPage() + $loop->iteration }}
                             </td>
-                            <td>
-                                <span class="badge bg-info">{{ $kategori->getProductCountAttribute() }}</span>
+                            <td class="p-4 font-medium text-white group-hover:text-blue-400 transition-colors">
+                                {{ $kategori->nama_kategori }}
                             </td>
-                            <td>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a href="{{ route('kategoris.show', $kategori) }}"
-                                        class="btn btn-outline-primary" title="Lihat">
+                            <td class="p-4 text-slate-300 text-sm">
+                                {{ Str::limit($kategori->deskripsi, 50) ?: '-' }}
+                            </td>
+                            <td class="p-4 text-center">
+                                <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                    {{ $kategori->getProductCountAttribute() }} Produk
+                                </span>
+                            </td>
+                            <td class="p-4 text-center">
+                                <div class="flex justify-center gap-2">
+                                    <a href="{{ route('kategoris.show', $kategori) }}" class="p-2 rounded-lg hover:bg-white/10 text-blue-400 transition-colors" title="Lihat">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('kategoris.edit', $kategori) }}"
-                                        class="btn btn-outline-warning" title="Edit">
+                                    <a href="{{ route('kategoris.edit', $kategori) }}" class="p-2 rounded-lg hover:bg-white/10 text-yellow-400 transition-colors" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('kategoris.destroy', $kategori) }}" method="POST"
-                                        style="display: inline;">
+                                    <form action="{{ route('kategoris.destroy', $kategori) }}" method="POST" class="inline-block" onsubmit="return confirm('Yakin ingin menghapus kategori ini? Produk terkait mungkin akan terpengaruh.')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-outline-danger" title="Hapus"
-                                            onclick="return confirm('Yakin ingin menghapus kategori ini?')">
+                                        <button class="p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors" title="Hapus">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
@@ -122,9 +103,11 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-4 text-muted">
-                                <i class="fas fa-inbox fa-2x mb-2 d-block"></i>
-                                Tidak ada data kategori
+                            <td colspan="5" class="p-8 text-center text-slate-500">
+                                <div class="flex flex-col items-center justify-center">
+                                    <i class="fas fa-tags text-4xl mb-3 opacity-20"></i>
+                                    <p>Belum ada kategori ditemukan.</p>
+                                </div>
                             </td>
                         </tr>
                     @endforelse
@@ -132,12 +115,8 @@
             </table>
         </div>
 
-        <!-- Pagination -->
-        @if ($kategoris->count())
-            <div class="card-footer bg-light">
-                {{ $kategoris->links() }}
-            </div>
-        @endif
+        <div class="mt-6">
+            {{ $kategoris->appends(request()->query())->links() }}
+        </div>
     </div>
-</div>
 @endsection

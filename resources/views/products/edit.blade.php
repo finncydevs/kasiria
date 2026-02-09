@@ -44,7 +44,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Nama Produk</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-cube"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-cube"></i></span>
                             <input type="text" name="nama_produk" class="glass-input w-full pl-10" value="{{ old('nama_produk', $product->nama_produk) }}" required>
                         </div>
                     </div>
@@ -52,9 +52,22 @@
                     <!-- Kode Barcode -->
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Kode Barcode</label>
-                        <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-barcode"></i></span>
-                            <input type="text" name="kode_barcode" class="glass-input w-full pl-10" value="{{ old('kode_barcode', $product->kode_barcode) }}" required>
+                        <div class="flex gap-2">
+                            <div class="relative flex-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-barcode"></i></span>
+                                <input type="text" name="kode_barcode" id="kode_barcode" class="glass-input w-full pl-10" value="{{ old('kode_barcode', $product->kode_barcode) }}" required>
+                            </div>
+                            <button type="button" class="glass-btn px-4 bg-white/5 hover:bg-white/10 active:bg-blue-500/20 transition-colors" onclick="toggleScanner()" title="Scan Barcode">
+                                <i class="fas fa-qrcode text-blue-400"></i>
+                            </button>
+                        </div>
+
+                        <!-- Scanner Container -->
+                        <div id="product-scanner-wrapper" class="hidden mt-4 rounded-lg overflow-hidden border border-white/10 relative bg-black/20">
+                             <x-scanner />
+                             <button type="button" class="absolute top-2 right-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full p-1 w-8 h-8 flex items-center justify-center z-10 shadow-lg backdrop-blur-sm transition-colors" onclick="toggleScanner()">
+                                <i class="fas fa-times"></i>
+                             </button>
                         </div>
                     </div>
 
@@ -62,7 +75,7 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Kategori</label>
                         <div class="relative">
-                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-tag"></i></span>
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-tag"></i></span>
                             <select name="kategori_id" class="glass-input w-full pl-10" required>
                                 <option value="" class="text-slate-800">-- Pilih Kategori --</option>
                                 @foreach($kategoris as $kategori)
@@ -79,7 +92,7 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-400 mb-1">Harga Beli</label>
                             <div class="relative">
-                                <span class="absolute left-3 top-3 text-slate-500">Rp</span>
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">Rp</span>
                                 <input type="number" name="harga_beli" class="glass-input w-full pl-10" value="{{ old('harga_beli', $product->harga_beli) }}" required>
                             </div>
                         </div>
@@ -88,7 +101,7 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-400 mb-1">Harga Jual</label>
                             <div class="relative">
-                                <span class="absolute left-3 top-3 text-slate-500">Rp</span>
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">Rp</span>
                                 <input type="number" name="harga_jual" class="glass-input w-full pl-10" value="{{ old('harga_jual', $product->harga_jual) }}" required>
                             </div>
                         </div>
@@ -99,7 +112,7 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-400 mb-1">Stok</label>
                             <div class="relative">
-                                <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-cubes"></i></span>
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-cubes"></i></span>
                                 <input type="number" name="stok" class="glass-input w-full pl-10" value="{{ old('stok', $product->stok) }}" required>
                             </div>
                         </div>
@@ -108,7 +121,7 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-400 mb-1">Satuan</label>
                             <div class="relative">
-                                <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-ruler"></i></span>
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-ruler"></i></span>
                                 <input type="text" name="satuan" class="glass-input w-full pl-10" value="{{ old('satuan', $product->satuan) }}">
                             </div>
                         </div>
@@ -160,4 +173,37 @@
             </div>
         </div>
     </div>
+    
+    @push('scripts')
+    <script>
+        function toggleScanner() {
+            const container = document.getElementById('product-scanner-wrapper');
+            if (container.classList.contains('hidden')) {
+                container.classList.remove('hidden');
+                // Check if startScanner is available (from x-scanner component)
+                if (typeof startScanner === 'function') {
+                    startScanner();
+                }
+            } else {
+                container.classList.add('hidden');
+                // Check if stopScanner is available
+                if (typeof stopScanner === 'function') {
+                    stopScanner();
+                }
+            }
+        }
+
+        document.addEventListener('code-scanned', function(e) {
+            const code = e.detail;
+            document.getElementById('kode_barcode').value = code;
+            
+            // Visual feedback
+            const input = document.getElementById('kode_barcode');
+            input.classList.add('bg-emerald-500/20', 'text-emerald-300');
+            setTimeout(() => {
+                input.classList.remove('bg-emerald-500/20', 'text-emerald-300');
+            }, 1000);
+        });
+    </script>
+    @endpush
 @endsection

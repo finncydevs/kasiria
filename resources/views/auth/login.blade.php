@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -70,7 +69,7 @@
                 <div class="mb-5">
                     <label class="block text-sm font-medium text-slate-300 mb-2">Email / Username</label>
                     <div class="relative">
-                        <span class="absolute left-3 top-3.5 text-slate-500"><i class="fas fa-envelope"></i></span>
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-envelope"></i></span>
                         <input type="text" name="username" class="glass-input w-full pl-10" placeholder="user@kasiria.com" value="{{ old('username') }}" required autofocus>
                     </div>
                 </div>
@@ -78,7 +77,7 @@
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-slate-300 mb-2">Password</label>
                     <div class="relative">
-                        <span class="absolute left-3 top-3.5 text-slate-500"><i class="fas fa-lock"></i></span>
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500"><i class="fas fa-lock"></i></span>
                         <input type="password" name="password" class="glass-input w-full pl-10" placeholder="••••••••" required>
                     </div>
                 </div>
@@ -126,5 +125,6 @@
         </div>
     </div>
 
+    <script src="https://kit.fontawesome.com/e686fa0059.js" crossorigin="anonymous"></script>
 </body>
 </html>

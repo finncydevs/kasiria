@@ -20,7 +20,7 @@
         
         <div class="flex items-center gap-3 w-full md:w-auto">
             <div class="relative w-full md:w-64">
-                <i class="fas fa-search absolute left-3 top-3 text-slate-400 text-sm"></i>
+                <i class="fas fa-search absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm"></i>
                 <input type="text" placeholder="Cari transaksi..." class="glass-input w-full pl-9">
             </div>
             
