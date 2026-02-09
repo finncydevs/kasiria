@@ -42,8 +42,6 @@ return new class extends Migration
         Schema::table('transactions', function (Blueprint $table) {
             $table->dropForeign(['customer_user_id']);
             $table->dropColumn('customer_user_id');
-            // We cannot easily make cashier_id non-nullable again if there are null values, 
-            // so we leave it nullable or would need to assign a default cashier.
              $table->unsignedBigInteger('cashier_id')->nullable(false)->change();
         });
 

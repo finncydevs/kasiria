@@ -50,7 +50,7 @@ class PelangganDashboardController extends Controller
     {
         $request->validate([
             'items' => 'required|array',
-            'items.*.id' => 'required|exists:products,id',
+            'items.*.id' => 'required|exists:produks,id',
             'items.*.qty' => 'required|integer|min:1',
         ]);
 
@@ -104,8 +104,10 @@ class PelangganDashboardController extends Controller
                     'transaction_id' => $transaction->id,
                     'product_id' => $item['product']->id,
                     'quantity' => $item['qty'],
-                    'price' => $item['price'],
-                    'subtotal' => $item['subtotal']
+                    'unit_price' => $item['price'],
+                    'subtotal' => $item['subtotal'],
+                    'discount' => 0,
+                    'total' => $item['subtotal'] // total = subtotal - discount
                 ]);
 
                 // Deduct stock immediately (or reserve it)
