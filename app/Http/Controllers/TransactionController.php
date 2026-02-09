@@ -119,6 +119,13 @@ class TransactionController extends Controller
             // Assumes relation name is 'items' in Transaction model
             $transaction->items()->createMany($itemsData);
 
+            // Award Points to Cashier (User)
+            // Rule: 1 Point per 1000 IDR
+            $pointsEarned = intval($grandTotal / 1000);
+            if ($pointsEarned > 0 && auth()->check()) {
+                auth()->user()->addPoints($pointsEarned, "Sales Commission: TRX-" . $transaction->transaction_number);
+            }
+
             DB::commit();
 
             // If pay_now, redirect to payment page

@@ -4,20 +4,36 @@ namespace App\Http\Controllers;
 
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Wajib di-import untuk cek Auth
 
 class KategoriController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            $user = Auth::user();
+
+            // Menggunakan array untuk pengecekan role yang eksplisit (Inklusif: admin ATAU owner)
+            if (!in_array($user->role, ['kasir', 'owner'])) {
+                // Jika kasir mencoba mengakses, alihkan ke dashboard
+                return redirect()->route('dashboard')->with('error', 'Anda tidak memiliki akses untuk mengelola Kategori.');
+            }
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of kategoris.
      */
-    public function index()
+    public function index(Request $request)
     {
         $kategoris = Kategori::query()
-            ->when(request('search'), function ($query) {
-                $search = request('search');
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
                 $query->where('nama_kategori', 'like', "%{$search}%")
                     ->orWhere('deskripsi', 'like', "%{$search}%");
             })
+            ->withCount('products') // Menghitung jumlah produk di setiap kategori
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 

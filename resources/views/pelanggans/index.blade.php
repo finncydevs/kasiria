@@ -20,6 +20,7 @@
         <a href="{{ route('pelanggans.create') }}" class="btn btn-primary btn-sm">
             <i class="fas fa-plus me-2"></i>Tambah Pelanggan
         </a>
+        
     </div>
 
     <!-- Alerts -->

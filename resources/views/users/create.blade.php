@@ -1,176 +1,161 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', 'Tambah Pengguna')
+@section('page_title', 'Tambah Pengguna')
+
+@section('breadcrumb')
+    <li class="flex items-center">
+        <a href="{{ route('dashboard') }}" class="hover:text-blue-400 transition-colors">Dashboard</a>
+        <i class="fas fa-chevron-right text-xs mx-2"></i>
+    </li>
+    <li class="flex items-center">
+        <a href="{{ route('users.index') }}" class="hover:text-blue-400 transition-colors">Pengguna</a>
+        <i class="fas fa-chevron-right text-xs mx-2"></i>
+    </li>
+    <li class="flex items-center text-slate-200">
+        Tambah
+    </li>
+@endsection
 
 @section('content')
-<div class="container-fluid">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('users.index') }}">Pengguna</a></li>
-            <li class="breadcrumb-item active">Tambah Pengguna</li>
-        </ol>
-    </nav>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Form Section -->
+        <div class="lg:col-span-2 glass-panel">
+            <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
+                <i class="fas fa-user-plus text-blue-400"></i> Tambah Pengguna Baru
+            </h2>
 
-    <!-- Header -->
-    <div class="mb-4">
-        <h1 class="h3 text-dark fw-bold">
-            <i class="fas fa-user-plus text-primary me-2"></i>Tambah Pengguna Baru
-        </h1>
-    </div>
+            <form action="{{ route('users.store') }}" method="POST">
+                @csrf
 
-    <!-- Form Card -->
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-body">
-                    <form action="{{ route('users.store') }}" method="POST">
-                        @csrf
-
-                        <!-- Nama -->
-                        <div class="mb-3">
-                            <label for="nama" class="form-label fw-bold">
-                                <i class="fas fa-user text-primary me-2"></i>Nama Lengkap
-                            </label>
-                            <input type="text" class="form-control @error('nama') is-invalid @enderror"
-                                id="nama" name="nama" placeholder="Masukkan nama lengkap"
-                                value="{{ old('nama') }}" required>
-                            @error('nama')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Nama Lengkap</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-user"></i></span>
+                            <input type="text" name="nama" class="glass-input w-full pl-10 @error('nama') border-red-500/50 @enderror" placeholder="Masukkan nama lengkap" value="{{ old('nama') }}" required>
                         </div>
+                        @error('nama')
+                            <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Username -->
-                        <div class="mb-3">
-                            <label for="username" class="form-label fw-bold">
-                                <i class="fas fa-at text-info me-2"></i>Username
-                            </label>
-                            <input type="text" class="form-control @error('username') is-invalid @enderror"
-                                id="username" name="username" placeholder="username123"
-                                value="{{ old('username') }}" required>
-                            @error('username')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Username</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-at"></i></span>
+                            <input type="text" name="username" class="glass-input w-full pl-10 @error('username') border-red-500/50 @enderror" placeholder="username123" value="{{ old('username') }}" required>
                         </div>
+                        @error('username')
+                            <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Email -->
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-bold">
-                                <i class="fas fa-envelope text-success me-2"></i>Email
-                            </label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                id="email" name="email" placeholder="user@example.com"
-                                value="{{ old('email') }}" required>
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Email</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-envelope"></i></span>
+                            <input type="email" name="email" class="glass-input w-full pl-10 @error('email') border-red-500/50 @enderror" placeholder="user@example.com" value="{{ old('email') }}" required>
                         </div>
+                        @error('email')
+                            <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- No HP -->
-                        <div class="mb-3">
-                            <label for="no_hp" class="form-label fw-bold">
-                                <i class="fas fa-phone text-warning me-2"></i>No HP
-                            </label>
-                            <input type="text" class="form-control @error('no_hp') is-invalid @enderror"
-                                id="no_hp" name="no_hp" placeholder="081234567890"
-                                value="{{ old('no_hp') }}">
-                            @error('no_hp')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">No HP</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-phone"></i></span>
+                            <input type="text" name="no_hp" class="glass-input w-full pl-10 @error('no_hp') border-red-500/50 @enderror" placeholder="081234567890" value="{{ old('no_hp') }}">
                         </div>
+                        @error('no_hp')
+                            <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Role -->
-                        <div class="mb-3">
-                            <label for="role" class="form-label fw-bold">
-                                <i class="fas fa-shield-alt text-danger me-2"></i>Role
-                            </label>
-                            <select class="form-select @error('role') is-invalid @enderror"
-                                id="role" name="role" required>
-                                <option value="">-- Pilih Role --</option>
-                                <option value="admin" @if(old('role') === 'admin') selected @endif>Admin</option>
-                                <option value="kasir" @if(old('role') === 'kasir') selected @endif>Kasir</option>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Role</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-shield-alt"></i></span>
+                            <select name="role" class="glass-input w-full pl-10 @error('role') border-red-500/50 @enderror" required>
+                                <option value="" class="text-slate-800">-- Pilih Role --</option>
+                                <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }} class="text-slate-800">Admin</option>
+                                <option value="kasir" {{ old('role') === 'kasir' ? 'selected' : '' }} class="text-slate-800">Kasir</option>
+                                <option value="owner" {{ old('role') === 'owner' ? 'selected' : '' }} class="text-slate-800">Owner</option>
                             </select>
-                            @error('role')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
                         </div>
+                        @error('role')
+                            <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <!-- Password -->
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-bold">
-                                <i class="fas fa-lock text-secondary me-2"></i>Password
-                            </label>
-                            <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                id="password" name="password" placeholder="Masukkan password (minimal 8 karakter)"
-                                required>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Password</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-lock"></i></span>
+                                <input type="password" name="password" class="glass-input w-full pl-10 @error('password') border-red-500/50 @enderror" placeholder="Minimal 8 karakter" required>
+                            </div>
                             @error('password')
-                                <div class="invalid-feedback">{{ $message }}</div>
+                                <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>
-
-                        <!-- Password Confirmation -->
-                        <div class="mb-3">
-                            <label for="password_confirmation" class="form-label fw-bold">
-                                <i class="fas fa-lock-open text-secondary me-2"></i>Konfirmasi Password
-                            </label>
-                            <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
-                                id="password_confirmation" name="password_confirmation"
-                                placeholder="Ketik ulang password" required>
-                            @error('password_confirmation')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-
-                        <!-- Status -->
-                        <div class="mb-3">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="status" name="status"
-                                    value="1" @if(old('status', true)) checked @endif>
-                                <label class="form-check-label fw-bold" for="status">
-                                    <i class="fas fa-check-circle text-success me-2"></i>Aktif
-                                </label>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-400 mb-1">Konfirmasi Password</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-3 text-slate-500"><i class="fas fa-lock-open"></i></span>
+                                <input type="password" name="password_confirmation" class="glass-input w-full pl-10" placeholder="Ketik ulang password" required>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Action Buttons -->
-                        <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Simpan
-                            </button>
-                            <a href="{{ route('users.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>Batal
-                            </a>
-                        </div>
-                    </form>
+                    <div class="pt-2">
+                        <label class="flex items-center cursor-pointer gap-3">
+                            <div class="relative inline-block w-10 h-6 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" name="status" id="status" value="1" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer peer checked:right-0 checked:border-emerald-500 transition-all duration-300 right-4 border-slate-300" {{ old('status', true) ? 'checked' : '' }} />
+                                <div class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-700 cursor-pointer peer-checked:bg-emerald-500/50 transition-colors duration-300"></div>
+                            </div>
+                            <span class="text-slate-200 font-medium">Akun Aktif</span>
+                        </label>
+                    </div>
+
+                    <div class="flex gap-3 mt-6 pt-4 border-t border-white/10">
+                        <button type="submit" class="glass-btn bg-blue-600/80 hover:bg-blue-600 text-white px-6 py-2.5 shadow-lg shadow-blue-500/20">
+                            <i class="fas fa-save mr-2"></i> Simpan
+                        </button>
+                        <a href="{{ route('users.index') }}" class="glass-btn bg-white/5 hover:bg-white/10 text-slate-300 px-6 py-2.5">
+                            <i class="fas fa-times mr-2"></i> Batal
+                        </a>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
 
-        <!-- Info Card -->
-        <div class="col-lg-4">
-            <div class="card bg-light border-0">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">
-                        <i class="fas fa-info-circle text-info me-2"></i>Informasi
-                    </h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2">
-                            <strong>Admin:</strong><br>
-                            <small class="text-muted">Akses penuh ke sistem</small>
-                        </li>
-                        <li class="mb-2">
-                            <strong>Kasir:</strong><br>
-                            <small class="text-muted">Akses terbatas (transaksi saja)</small>
-                        </li>
-                        <li>
-                            <strong>Password:</strong><br>
-                            <small class="text-muted">Minimal 8 karakter, harus sama dengan konfirmasi</small>
-                        </li>
-                    </ul>
+        <!-- Info Section -->
+        <div class="glass-panel bg-white/5 h-fit">
+            <h5 class="font-medium text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-info-circle text-blue-400"></i> Informasi Role
+            </h5>
+            <div class="space-y-4 text-sm text-slate-300">
+                <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                    <strong class="text-purple-400 block mb-1">Admin</strong>
+                    <p class="text-slate-400">Memiliki akses penuh ke seluruh fitur sistem, termasuk manajemen pengguna dan pengaturan.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                    <strong class="text-blue-400 block mb-1">Kasir</strong>
+                    <p class="text-slate-400">Akses terbatas untuk melakukan transaksi penjualan dan melihat riwayat transaksi sendiri.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                    <strong class="text-amber-400 block mb-1">Owner</strong>
+                    <p class="text-slate-400">Akses untuk melihat laporan dan dashboard analitik, tanpa akses operasional kasir.</p>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-white/10">
+                    <p class="text-xs text-slate-500">
+                        <i class="fas fa-lock mr-1"></i> Password harus memiliki minimal 8 karakter.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
-</div>
 @endsection

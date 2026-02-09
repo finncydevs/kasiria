@@ -25,6 +25,7 @@ class User extends Authenticatable
         'role',
         'no_hp',
         'status',
+        'points',
     ];
 
     /**
@@ -48,6 +49,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'status' => 'boolean',
+            'points' => 'integer',
         ];
     }
 
@@ -57,6 +59,46 @@ class User extends Authenticatable
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'cashier_id');
+    }
+
+    /**
+     * Get point transactions for this user.
+     */
+    public function pointTransactions()
+    {
+        return $this->hasMany(PointTransaction::class);
+    }
+
+    /**
+     * Add points to user.
+     */
+    public function addPoints(int $amount, string $description = null)
+    {
+        $this->increment('points', $amount);
+        
+        $this->pointTransactions()->create([
+            'amount' => $amount,
+            'type' => 'earn',
+            'description' => $description,
+        ]);
+    }
+
+    /**
+     * Redeem points from user.
+     */
+    public function redeemPoints(int $amount, string $description = null)
+    {
+        if ($this->points < $amount) {
+            throw new \Exception('Insufficient points');
+        }
+
+        $this->decrement('points', $amount);
+        
+        $this->pointTransactions()->create([
+            'amount' => -$amount,
+            'type' => 'redeem',
+            'description' => $description,
+        ]);
     }
 
     /**

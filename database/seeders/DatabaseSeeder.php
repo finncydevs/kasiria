@@ -2,148 +2,165 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Product;
-use App\Models\Pelanggan;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Kategori;
+use App\Models\Product;
+use App\Models\Pelanggan; // Import model Pelanggan
+use App\Models\User;     // Import model User
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash; // Import Hash untuk password
 
 class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     *
+     * @return void
      */
-    public function run(): void
+    public function run()
     {
-        // Create admin user
-        User::create([
-            'nama' => 'Admin Kasiria',
-            'username' => 'admin',
-            'email' => 'admin@kasiria.local',
-            'password' => Hash::make('admin123'),
-            'role' => 'admin',
-            'no_hp' => '081234567890',
-            'status' => true,
-        ]);
+        // Hapus data lama (opsional, untuk memastikan seeding bersih saat run berulang)
+        // Kategori::truncate();
+        // Product::truncate();
+        // Pelanggan::truncate();
+        // User::truncate();
+        // DB::table('users')->delete();
+        // DB::table('kategoris')->delete();
+        // Dll. (Gunakan ini jika Anda ingin menjalankan seeder secara berulang tanpa fresh migrate)
 
-        // Create test cashier users
-        User::create([
-            'nama' => 'Ahmad Wijaya',
-            'username' => 'ahmad_wijaya',
-            'email' => 'ahmad@kasiria.local',
-            'password' => Hash::make('password123'),
-            'role' => 'kasir',
-            'no_hp' => '081234567891',
-            'status' => true,
-        ]);
 
-        User::create([
-            'nama' => 'Siti Nurhaliza',
-            'username' => 'siti_nurhaliza',
-            'email' => 'siti@kasiria.local',
-            'password' => Hash::make('password123'),
-            'role' => 'kasir',
-            'no_hp' => '081234567892',
-            'status' => true,
-        ]);
+        // ===========================================
+        // 1. LOGIKA KATEGORI SEEDER
+        // ===========================================
+        
+        Kategori::create(['nama_kategori' => 'Minuman']);
+        Kategori::create(['nama_kategori' => 'Makanan']);
+        Kategori::create(['nama_kategori' => 'Snack']);
+        Kategori::create(['nama_kategori' => 'Peralatan']);
 
-        // Create sample products
+
+        // ===========================================
+        // 2. LOGIKA PRODUK SEEDER
+        // ===========================================
+
+        // Ambil ID kategori yang baru saja dibuat.
+        $kategoriMinuman = Kategori::where('nama_kategori', 'Minuman')->firstOrFail();
+        $kategoriMakanan = Kategori::where('nama_kategori', 'Makanan')->firstOrFail();
+
+        // 1. Kopi Arabika
         Product::create([
-            'name' => 'Kopi Arabika',
-            'sku' => 'PROD001',
-            'description' => 'Kopi Arabika premium dari Indonesia',
-            'category' => 'Minuman',
-            'price' => 25000,
-            'cost' => 15000,
+            'nama_produk' => 'Kopi Arabika',
+            'kode_barcode' => 'PROD001',
+            'kategori_id' => $kategoriMinuman->kategori_id,
+            'deskripsi' => 'Kopi Arabika premium dari Indonesia',
+            'harga_beli' => 15000,
+            'harga_jual' => 25000,
             'stok' => 100,
-            'min_stock' => 10,
+            'satuan' => 'bungkus',
             'status' => true,
         ]);
 
+        // 2. Teh Hijau
         Product::create([
-            'name' => 'Teh Hijau',
-            'sku' => 'PROD002',
-            'description' => 'Teh hijau segar',
-            'category' => 'Minuman',
-            'price' => 15000,
-            'cost' => 8000,
+            'nama_produk' => 'Teh Hijau',
+            'kode_barcode' => 'PROD002',
+            'kategori_id' => $kategoriMinuman->kategori_id,
+            'deskripsi' => 'Teh hijau segar',
+            'harga_beli' => 8000,
+            'harga_jual' => 15000,
             'stok' => 150,
-            'min_stock' => 20,
+            'satuan' => 'kotak',
             'status' => true,
         ]);
 
+        // 3. Roti Tawar
         Product::create([
-            'name' => 'Roti Tawar',
-            'sku' => 'PROD003',
-            'description' => 'Roti tawar putih lembut',
-            'category' => 'Makanan',
-            'price' => 20000,
-            'cost' => 12000,
+            'nama_produk' => 'Roti Tawar',
+            'kode_barcode' => 'PROD003',
+            'kategori_id' => $kategoriMakanan->kategori_id,
+            'deskripsi' => 'Roti tawar putih lembut',
+            'harga_beli' => 12000,
+            'harga_jual' => 20000,
             'stok' => 50,
-            'min_stock' => 5,
+            'satuan' => 'pcs',
             'status' => true,
         ]);
 
+        // 4. Donat Coklat
         Product::create([
-            'name' => 'Donat Coklat',
-            'sku' => 'PROD004',
-            'description' => 'Donat dengan topping coklat',
-            'category' => 'Makanan',
-            'price' => 8000,
-            'cost' => 4000,
+            'nama_produk' => 'Donat Coklat',
+            'kode_barcode' => 'PROD004',
+            'kategori_id' => $kategoriMakanan->kategori_id,
+            'deskripsi' => 'Donat dengan topping coklat',
+            'harga_beli' => 4000,
+            'harga_jual' => 8000,
             'stok' => 200,
-            'min_stock' => 30,
+            'satuan' => 'pcs',
             'status' => true,
         ]);
 
-        // Create sample customers
+
+        // ===========================================
+        // 3. LOGIKA PELANGGAN SEEDER
+        // ===========================================
+
         Pelanggan::create([
             'nama' => 'Budi Santoso',
-            'no_hp' => '081234567893',
-            'alamat' => 'Jl. Merdeka No. 123, Jakarta',
-            'email' => 'budi@email.com',
+            'no_hp' => '081234567890',
+            'alamat' => 'Jl. Merdeka No. 10, Jakarta',
+            'email' => 'budi@example.com',
             'member_level' => 'Gold',
-            'poin' => 150,
-            'status' => true,
+            'poin' => 500,
         ]);
 
         Pelanggan::create([
-            'nama' => 'Rina Putri',
-            'no_hp' => '081234567894',
-            'alamat' => 'Jl. Sudirman No. 456, Jakarta',
-            'email' => 'rina@email.com',
+            'nama' => 'Siti Aminah',
+            'no_hp' => '087654321098',
+            'alamat' => 'Perumahan Indah Blok C5, Bandung',
+            'email' => 'siti@example.com',
             'member_level' => 'Silver',
-            'poin' => 75,
-            'status' => true,
+            'poin' => 150,
         ]);
 
         Pelanggan::create([
-            'nama' => 'Hendra Gunawan',
-            'no_hp' => '081234567895',
-            'alamat' => 'Jl. Gatot Subroto No. 789, Jakarta',
-            'email' => 'hendra@email.com',
-            'member_level' => 'Platinum',
-            'poin' => 300,
-            'status' => true,
-        ]);
-
-        Pelanggan::create([
-            'nama' => 'Dewi Lestari',
-            'no_hp' => '081234567896',
-            'alamat' => 'Jl. Ahmad Yani No. 321, Bandung',
-            'email' => 'dewi@email.com',
+            'nama' => 'Joko Susilo',
+            'no_hp' => '085000111222',
+            'alamat' => 'Kp. Durian Runtuh, Surabaya',
+            'email' => 'joko@example.com',
             'member_level' => 'Bronze',
-            'poin' => 25,
+            'poin' => 50,
+        ]);
+
+        // 1. User Admin (Akses Penuh)
+        User::create([
+            'nama' => 'Super Admin',
+            'username' => 'admin',
+            'email' => 'admin@kasiria.com',
+            'password' => Hash::make('password'), // Password: password
+            'role' => 'admin',
+            'no_hp' => '081122334455',
             'status' => true,
         ]);
 
-        Pelanggan::create([
-            'nama' => 'Agus Hermawan',
-            'no_hp' => '081234567897',
-            'alamat' => 'Jl. Diponegoro No. 654, Surabaya',
-            'email' => 'agus@email.com',
-            'member_level' => 'Gold',
-            'poin' => 200,
+        // 2. User Owner (Akses Penuh, untuk Laporan & Bisnis)
+        User::create([
+            'nama' => 'Pemilik Toko',
+            'username' => 'owner',
+            'email' => 'owner@kasiria.com',
+            'password' => Hash::make('password'), // Password: password
+            'role' => 'owner',
+            'no_hp' => '081199887766',
+            'status' => true,
+        ]);
+
+        // 3. User Kasir (Akses Terbatas ke Transaksi)
+        User::create([
+            'nama' => 'Kasir Utama',
+            'username' => 'kasir',
+            'email' => 'kasir@kasiria.com',
+            'password' => Hash::make('password'), // Password: password
+            'role' => 'kasir',
+            'no_hp' => '085544332211',
             'status' => true,
         ]);
     }

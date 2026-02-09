@@ -35,7 +35,7 @@ class UserController extends Controller
             'username' => 'required|string|max:50|unique:users',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,kasir',
+            'role' => 'required|in:admin,kasir,owner',
             'no_hp' => 'nullable|string|max:20',
             'status' => 'boolean',
         ]);
@@ -73,7 +73,7 @@ class UserController extends Controller
             'nama' => 'required|string|max:50',
             'username' => 'required|string|max:50|unique:users,username,' . $user->id,
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'role' => 'required|in:admin,kasir',
+            'role' => 'required|in:admin,kasir,owner',
             'no_hp' => 'nullable|string|max:20',
             'status' => 'boolean',
         ]);

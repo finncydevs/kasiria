@@ -7,9 +7,25 @@ use App\Models\Product;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
+
+   public function __construct()
+    {
+        // ===============================================
+        $this->middleware(function ($request, $next) {
+            $user = Auth::user();
+
+            if (!in_array($user->role, ['owner', 'kasir'])) {
+                // Jika kasir mencoba mengakses, alihkan ke dashboard
+                return redirect()->route('dashboard')->with('error', 'Anda tidak memiliki akses untuk mengelola Kategori.');
+            }
+            return $next($request);
+        });
+    }
+
     /**
      * Display sales report.
      */
