@@ -29,14 +29,25 @@ class SettingController extends Controller
      */
     public function index()
     {
-        // Data dummy untuk view
-        $settings = [
+        // Ambil semua setting dari database
+        $settingsCollection = \App\Models\Setting::all();
+        $settings = [];
+        
+        // Map ke array assosiatif untuk kemudahan akses di view
+        foreach($settingsCollection as $setting) {
+            $settings[$setting->key] = $setting->value;
+        }
+
+        // Default values jika belum ada di database
+        $defaults = [
             'app_name' => config('app.name', 'Kasiria'),
             'app_description' => 'Sistem Manajemen Kasir Terintegrasi',
             'currency' => 'IDR',
             'decimal_places' => 2,
             'tax_rate' => 0,
         ];
+
+        $settings = array_merge($defaults, $settings);
 
         return view('settings.index', compact('settings'));
     }
@@ -51,7 +62,16 @@ class SettingController extends Controller
             'tax_rate' => 'required|numeric|min:0|max:100',
         ]);
 
-        // Logika untuk update konfigurasi aplikasi
+        // Simpan ke database
+        \App\Models\Setting::updateOrCreate(
+            ['key' => 'app_name'],
+            ['value' => $validated['app_name']]
+        );
+
+        \App\Models\Setting::updateOrCreate(
+            ['key' => 'tax_rate'],
+            ['value' => $validated['tax_rate']]
+        );
 
         return back()->with('success', 'Pengaturan berhasil diperbarui.');
     }

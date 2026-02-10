@@ -101,4 +101,31 @@ use SoftDeletes;
         }
         return false;
     }
+    /**
+     * Get member level based on points.
+     */
+    public function getMemberLevelAttribute()
+    {
+        if ($this->poin > 500) {
+            return 'Gold';
+        } elseif ($this->poin > 100) {
+            return 'Silver';
+        } else {
+            return 'Bronze';
+        }
+    }
+
+    /**
+     * Get discount rate based on member level.
+     */
+    public function getDiscountRateAttribute()
+    {
+        if ($this->poin > 500) { // Gold
+            return 5;
+        } elseif ($this->poin > 100) { // Silver
+            return 3;
+        } else { // Bronze
+            return 1;
+        }
+    }
 }

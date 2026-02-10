@@ -37,7 +37,10 @@ class TransactionController extends Controller
             ? Transaction::generateTransactionNumber()
             : 'TRX-' . time();
 
-        return view('transactions.create', compact('products', 'pelanggans', 'transactionNumber'));
+        // Get Tax Rate
+        $taxRate = \App\Models\Setting::where('key', 'tax_rate')->value('value') ?? 0;
+
+        return view('transactions.create', compact('products', 'pelanggans', 'transactionNumber', 'taxRate'));
     }
 
     public function store(Request $request)

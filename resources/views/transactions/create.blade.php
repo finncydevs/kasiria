@@ -47,11 +47,15 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-400 mb-2">Pelanggan (Optional)</label>
-                    <select name="pelanggan_id" class="glass-input w-full">
-                        <option value="" class="text-slate-800">-- Tidak Ada --</option>
+                    <select name="pelanggan_id" id="patient-select" class="glass-input w-full">
+                        <option value="" class="text-slate-800" data-discount="0">-- Tidak Ada --</option>
                         @foreach($pelanggans as $p)
-                            <option value="{{ $p->id }}" {{ old('pelanggan_id') == $p->id ? 'selected' : '' }} class="text-slate-800">
-                                {{ $p->nama }} ({{ $p->no_hp ?? '-' }})
+                            <option value="{{ $p->id }}" 
+                                    class="text-slate-800" 
+                                    data-discount="{{ $p->discount_rate }}" 
+                                    data-level="{{ $p->member_level }}"
+                                    {{ old('pelanggan_id') == $p->id ? 'selected' : '' }}>
+                                {{ $p->nama }} ({{ $p->member_level }} - Diskon {{ $p->discount_rate }}%)
                             </option>
                         @endforeach
                     </select>
@@ -146,8 +150,8 @@
                             <input type="number" name="discount" id="global-discount" class="glass-input w-32 text-right p-1 text-sm h-8" value="0" min="0">
                         </div>
                         <div class="flex justify-between items-center text-slate-400">
-                            <label>Pajak</label>
-                            <input type="number" name="tax" id="global-tax" class="glass-input w-32 text-right p-1 text-sm h-8" value="0" min="0">
+                            <label>Pajak ({{ $taxRate ?? 0 }}%)</label>
+                            <input type="number" name="tax" id="global-tax" class="glass-input w-32 text-right p-1 text-sm h-8 bg-white/5 opacity-75 cursor-not-allowed" value="0" min="0" readonly>
                         </div>
                         
                         <div class="my-4 border-t border-white/10"></div>
@@ -240,12 +244,40 @@
             let subtotalAll = 0;
             document.querySelectorAll('.subtotal-cell').forEach(cell => {
                 subtotalAll += parseFloat(cell.dataset.value) || 0;
-            });
+            // Membership Discount Logic
+            const customerSelect = document.getElementById('patient-select');
+            const selectedOption = customerSelect.options[customerSelect.selectedIndex];
+            const memberDiscountRate = parseFloat(selectedOption.getAttribute('data-discount')) || 0;
+            const memberLevel = selectedOption.getAttribute('data-level') || '';
 
+            // Calculate discount amount based on subtotal
+            let memberDiscountAmount = 0;
+            if (memberDiscountRate > 0) {
+                memberDiscountAmount = (subtotalAll * memberDiscountRate) / 100;
+                
+                // Update display label or input to show what's happening
+                // We'll update the global discount input value for submission
+                document.getElementById('global-discount').value = memberDiscountAmount;
+                
+                // Optional: Show toast or label update
+                // console.log(`Applied ${memberLevel} discount: ${memberDiscountRate}%`);
+            } else {
+                 // Reset if no member selected or custom override? 
+                 // For now, if no member, we respect manual input OR reset to 0 based on user requirement "buatkan diskon otomatis"
+                 // Let's allow manual override if user changes it manually, but auto-set on customer change.
+            }
+
+            // Re-read discount (in case we just updated it or user manually changed it)
             const globalDisc = parseFloat(document.getElementById('global-discount').value) || 0;
-            const globalTax = parseFloat(document.getElementById('global-tax').value) || 0;
+            
+            // Calculate Tax automatically based on subtotal (after discount)
+            const taxRate = {{ $taxRate ?? 0 }};
+            const taxableAmount = Math.max(0, subtotalAll - globalDisc);
+            const verifiedTax = (taxableAmount * taxRate) / 100;
+            
+            document.getElementById('global-tax').value = verifiedTax;
 
-            const grandTotal = subtotalAll - globalDisc + globalTax;
+            const grandTotal = subtotalAll - globalDisc + verifiedTax;
 
             document.getElementById('display-subtotal').value = formatRupiah(subtotalAll);
             document.getElementById('display-total').value = formatRupiah(grandTotal);
@@ -304,6 +336,8 @@
             document.getElementById('global-discount').addEventListener('input', recalcGrandTotal);
             document.getElementById('global-tax').addEventListener('input', recalcGrandTotal);
             document.getElementById('amount-paid').addEventListener('input', calcChange);
+
+            document.getElementById('patient-select').addEventListener('change', recalcGrandTotal);
 
             // Add Row Logic
             document.getElementById('add-row').addEventListener('click', function() {
