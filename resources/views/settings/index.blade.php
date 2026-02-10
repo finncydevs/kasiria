@@ -211,7 +211,7 @@
                                 
                                 <form action="{{ route('settings.backup') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="glass-btn bg-emerald-600/80 hover:bg-emerald-600 text-white w-full shadow-lg shadow-emerald-500/20" onclick="return confirm('Buat backup sekarang?')">
+                                    <button type="submit" class="glass-btn bg-emerald-600/80 hover:bg-emerald-600 text-white w-full shadow-lg shadow-emerald-500/20" onclick="return confirmAction(event, 'Buat backup database sekarang? Proses ini mungkin memakan waktu beberapa saat.', '{{ route('settings.backup') }}', 'Download Backup', 'info')">
                                         <i class="fas fa-download mr-2"></i> Download Backup
                                     </button>
                                 </form>

@@ -295,7 +295,7 @@
                         recalcGrandTotal();
                     } else {
                         // Could use a custom toast here
-                        alert("Minimal satu item.");
+                        showAlert("Minimal satu item transaksi harus ada.", "Tidak Bisa Menghapus", "warning");
                     }
                 }
             });
@@ -346,7 +346,7 @@
                 
                 if (!targetOption) {
                     // Use a toast or styled alert ideally, but alert is fine for now
-                    alert("Produk tidak ditemukan untuk barcode: " + code);
+                    showAlert("Produk tidak ditemukan untuk barcode: " + code, "Produk Tidak Ditemukan", "error");
                     return;
                 }
                 

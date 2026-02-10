@@ -113,5 +113,7 @@
     
     @yield('scripts')
     @stack('scripts')
+    
+    <x-modal />
 </body>
 </html>

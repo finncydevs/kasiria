@@ -62,8 +62,38 @@ class SettingController extends Controller
     public function backup()
     {
         try {
-            // Logika backup
-            return back()->with('success', 'Backup database berhasil dibuat.');
+            $filename = 'backup-kasiria-' . date('Y-m-d_H-i-s') . '.sql';
+            $path = storage_path('app/backups/' . $filename);
+            
+            // Ensure backup directory exists
+            if (!file_exists(storage_path('app/backups'))) {
+                mkdir(storage_path('app/backups'), 0755, true);
+            }
+
+            // Database configuration
+            $dbName = config('database.connections.mysql.database');
+            $dbUser = config('database.connections.mysql.username');
+            $dbPass = config('database.connections.mysql.password');
+            $dbHost = config('database.connections.mysql.host');
+
+            // Build mysqldump command
+            // Note: Using --no-tablespaces to avoid privilege errors on some restrictive hosts
+            $command = "mysqldump --user=" . escapeshellarg($dbUser) . 
+                       " --password=" . escapeshellarg($dbPass) . 
+                       " --host=" . escapeshellarg($dbHost) . 
+                       " " . escapeshellarg($dbName) . " > " . escapeshellarg($path);
+
+            $returnVar = null;
+            $output = null;
+
+            exec($command, $output, $returnVar);
+
+            if ($returnVar !== 0) {
+                throw new \Exception("mysqldump failed with exit code $returnVar");
+            }
+
+            return response()->download($path)->deleteFileAfterSend(true);
+
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan saat membuat backup: ' . $e->getMessage());
         }

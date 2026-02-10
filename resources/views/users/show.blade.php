@@ -59,7 +59,7 @@
                     
                     <form action="{{ route('users.reset-password', $user) }}" method="POST" class="mt-4">
                         @csrf
-                        <button type="submit" class="w-full glass-btn text-xs py-2 text-slate-300 hover:text-white border-white/10 hover:bg-white/5" onclick="return confirm('Reset password pengguna ini ke default?')">
+                        <button type="submit" class="w-full glass-btn text-xs py-2 text-slate-300 hover:text-white border-white/10 hover:bg-white/5" onclick="return confirmSubmit(event, 'Reset password pengguna ini ke default? Password akan diubah menjadi default sistem.', 'Reset Password', 'warning')">
                             <i class="fas fa-key mr-2"></i> Reset Password
                         </button>
                     </form>

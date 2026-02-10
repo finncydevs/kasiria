@@ -89,7 +89,7 @@ Route::middleware(['auth'])->group(function () {
     // Settings (Admin Only)
         Route::get('settings', [SettingController::class, 'index'])->name('settings');
         Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
-        Route::get('settings/backup', [SettingController::class, 'backup'])->name('settings.backup');
+        Route::post('settings/backup', [SettingController::class, 'backup'])->name('settings.backup');
 
     // Absensi System
     Route::resource('karyawans', KaryawanController::class);

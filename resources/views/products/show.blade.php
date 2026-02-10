@@ -104,7 +104,7 @@
                     </div>
                     
                     <div class="mt-8 pt-4 border-t border-white/5 flex justify-end">
-                         <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirm('Hapus produk ini secara permanen?')">
+                         <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirmSubmit(event, 'Hapus produk ini secara permanen? Data yang dihapus tidak dapat dikembalikan.', 'Hapus Produk', 'delete')">
                             @csrf
                             @method('DELETE')
                             <button class="text-red-400 hover:text-red-300 text-sm flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-red-500/10 transition-colors">

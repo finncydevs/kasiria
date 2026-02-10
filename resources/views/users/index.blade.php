@@ -93,7 +93,7 @@
                                             <i class="fas fa-power-off"></i>
                                         </button>
                                     </form>
-                                    <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus pengguna ini?')">
+                                    <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirmSubmit(event, 'Hapus pengguna ini? Akses mereka akan dicabut segera.', 'Hapus Pengguna', 'delete')">
                                         @csrf
                                         @method('DELETE')
                                         <button class="p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors" title="Hapus">

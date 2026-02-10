@@ -145,15 +145,17 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert(data.message); // Should use a cleaner toast, but alert is fine for now
-                        window.location.href = data.redirect;
+                        showAlert(data.message, "Berhasil", "success");
+                        setTimeout(() => {
+                             window.location.href = data.redirect;
+                        }, 1500);
                     } else {
-                        alert('Error: ' + data.message);
+                        showAlert('Error: ' + data.message, "Gagal", "error");
                         this.loading = false;
                     }
                 })
                 .catch(error => {
-                    alert('Terjadi kesalahan sistem.');
+                    showAlert('Terjadi kesalahan sistem.', "System Error", "error");
                     console.error(error);
                     this.loading = false;
                 });

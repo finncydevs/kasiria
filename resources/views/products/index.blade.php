@@ -118,7 +118,7 @@
                                     <a href="{{ route('products.edit', $product) }}" class="p-2 rounded-lg hover:bg-white/10 text-yellow-400 transition-colors" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('products.destroy', $product) }}" method="POST" class="inline-block" onsubmit="return confirm('Hapus produk ini?')">
+                                    <form action="{{ route('products.destroy', $product) }}" method="POST" class="inline-block" onsubmit="return confirmSubmit(event, 'Apakah Anda yakin ingin menghapus produk ini? pervubahan tidak dapat dikembalikan.', 'Hapus Produk', 'delete')">
                                         @csrf
                                         @method('DELETE')
                                         <button class="p-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors" title="Hapus">

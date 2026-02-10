@@ -31,7 +31,7 @@
                         <a href="{{ route('pelanggans.edit', $pelanggan) }}" class="p-2 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition-colors" title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <form action="{{ route('pelanggans.destroy', $pelanggan) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
+                        <form action="{{ route('pelanggans.destroy', $pelanggan) }}" method="POST" onsubmit="return confirmSubmit(event, 'Yakin ingin menghapus pelanggan ini? Tindakan ini tidak dapat dibatalkan.', 'Hapus Pelanggan', 'delete')">
                             @csrf @method('DELETE')
                             <button class="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors" title="Hapus">
                                 <i class="fas fa-trash"></i>

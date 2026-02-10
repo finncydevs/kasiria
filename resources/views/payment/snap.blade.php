@@ -101,16 +101,18 @@
                 onSuccess: function(result){
                     // Payment success
                     console.log('Payment successful:', result);
-                    alert('Pembayaran berhasil! Transaksi sedang diproses.');
-                    window.location.href = "{{ route('transactions.show', $transaction) }}";
+                    showAlert('Pembayaran berhasil! Transaksi sedang diproses.', 'Sukses', 'success');
+                    setTimeout(() => {
+                         window.location.href = "{{ route('transactions.show', $transaction) }}";
+                    }, 1500);
                 },
                 onPending: function(result){
                     console.log('Payment pending:', result);
-                    alert('Pembayaran sedang diproses, silakan selesaikan di browser Anda.');
+                    showAlert('Pembayaran sedang diproses, silakan selesaikan di browser Anda.', 'Pending', 'info');
                 },
                 onError: function(result){
                     console.log('Payment error:', result);
-                    alert('Pembayaran gagal! Silakan coba lagi.');
+                    showAlert('Pembayaran gagal! Silakan coba lagi.', 'Gagal', 'error');
                 },
                 onClose: function(){
                     console.log('Payment popup closed');
