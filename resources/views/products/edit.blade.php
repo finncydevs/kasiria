@@ -35,11 +35,39 @@
                 </div>
             @endif
 
-            <form action="{{ route('products.update', $product) }}" method="POST">
+            <form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
                 <div class="space-y-4">
+                    <!-- Image Upload -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Foto Produk</label>
+                        
+                        <!-- Current Image Preview -->
+                        @if($product->gambar)
+                            <div class="mb-3">
+                                <p class="text-xs text-slate-500 mb-2">Foto Saat Ini:</p>
+                                <img src="{{ asset('storage/' . $product->gambar) }}" alt="Current Image" class="h-32 rounded-lg object-cover border border-white/10">
+                            </div>
+                        @endif
+
+                        <div class="flex items-center justify-center w-full">
+                            <label for="gambar" class="flex flex-col items-center justify-center w-full h-32 border-2 border-white/10 border-dashed rounded-lg cursor-pointer bg-white/5 hover:bg-white/10 transition-colors group">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 mb-2 group-hover:text-blue-400 transition-colors"></i>
+                                    <p class="text-xs text-slate-400">Ganti Foto (Max 2MB)</p>
+                                    <p class="text-[10px] text-slate-500">Biarkan kosong jika tidak ingin mengubah</p>
+                                </div>
+                                <input id="gambar" name="gambar" type="file" class="hidden" accept="image/*" onchange="previewImage(this)">
+                            </label>
+                        </div>
+                        <div id="image-preview" class="mt-2 hidden">
+                            <p class="text-xs text-slate-500 mb-2">Preview Foto Baru:</p>
+                            <img src="" alt="Preview" class="h-32 rounded-lg object-cover border border-white/10">
+                        </div>
+                    </div>
+
                     <!-- Nama Produk -->
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Nama Produk</label>
@@ -176,6 +204,21 @@
     
     @push('scripts')
     <script>
+        function previewImage(input) {
+            const preview = document.getElementById('image-preview');
+            const img = preview.querySelector('img');
+            const file = input.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    preview.classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
         function toggleScanner() {
             const container = document.getElementById('product-scanner-wrapper');
             if (container.classList.contains('hidden')) {

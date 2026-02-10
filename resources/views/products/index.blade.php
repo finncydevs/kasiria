@@ -53,6 +53,7 @@
             <table class="w-full text-left">
                 <thead class="bg-white/5 text-xs text-slate-400 uppercase tracking-wider">
                     <tr>
+                        <th class="p-4">Gambar</th>
                         <th class="p-4">Barcode</th>
                         <th class="p-4">Nama Produk</th>
                         <th class="p-4">Kategori</th>
@@ -66,6 +67,15 @@
                 <tbody class="divide-y divide-white/5">
                     @forelse($products as $product)
                         <tr class="hover:bg-white/5 transition-colors group">
+                            <td class="p-4">
+                                @if($product->gambar)
+                                    <img src="{{ asset('storage/' . $product->gambar) }}" alt="{{ $product->nama_produk }}" class="w-10 h-10 rounded-lg object-cover border border-white/10">
+                                @else
+                                    <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-slate-500 border border-white/10">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                @endif
+                            </td>
                             <td class="p-4 text-slate-400 font-mono text-xs">
                                 <span class="bg-white/5 px-2 py-1 rounded border border-white/10">{{ $product->kode_barcode }}</span>
                             </td>
@@ -120,7 +130,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="p-8 text-center text-slate-500">
+                            <td colspan="9" class="p-8 text-center text-slate-500">
                                 <div class="flex flex-col items-center justify-center">
                                     <i class="fas fa-box-open text-4xl mb-3 opacity-20"></i>
                                     <p>Belum ada produk ditemukan.</p>

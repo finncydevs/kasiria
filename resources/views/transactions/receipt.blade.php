@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', 'Cetak Struk #' . ($transaction->transaction_number ?? ''))
 
@@ -95,7 +95,7 @@
             display: none;
         }
         /* Hilangkan elemen layout admin jika ada */
-        nav, header, footer, .sidebar {
+        nav, header, footer, .sidebar, #sidebar {
             display: none !important;
         }
     }

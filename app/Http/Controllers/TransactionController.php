@@ -166,6 +166,29 @@ class TransactionController extends Controller
         return view('transactions.receipt', compact('transaction'));
     }
 
+    public function approve(Transaction $transaction)
+    {
+        if ($transaction->status !== 'pending') {
+            return back()->with('error', 'Transaksi tidak dalam status pending.');
+        }
+
+        try {
+            DB::beginTransaction();
+            
+            $transaction->update(['status' => 'completed']);
+            
+            // If points/commission logic needs to happen on approval instead of creation
+            // It could be moved here. Current logic awards points on creation.
+
+            DB::commit();
+            return back()->with('success', 'Transaksi berhasil disetujui.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal menyetujui transaksi: ' . $e->getMessage());
+        }
+    }
+
     public function refund(Request $request, Transaction $transaction)
     {
         $request->validate(['reason' => 'required|string|max:255']);

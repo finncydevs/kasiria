@@ -149,4 +149,11 @@ class User extends Authenticatable
     {
         return $query->where('role', $role);
     }
+    /**
+     * Get the karyawan associated with the user.
+     */
+    public function karyawan()
+    {
+        return $this->hasOne(Karyawan::class);
+    }
 }

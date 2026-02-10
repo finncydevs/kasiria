@@ -13,6 +13,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PelangganDashboardController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\AbsensiController;
 
 // Public Routes
 Route::get('/', function () {
@@ -87,7 +89,15 @@ Route::middleware(['auth'])->group(function () {
     // Settings (Admin Only)
         Route::get('settings', [SettingController::class, 'index'])->name('settings');
         Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
-        Route::post('settings/backup', [SettingController::class, 'backup'])->name('settings.backup');
+        Route::get('settings/backup', [SettingController::class, 'backup'])->name('settings.backup');
+
+    // Absensi System
+    Route::resource('karyawans', KaryawanController::class);
+    Route::get('karyawans/{karyawan}/print-qr', [KaryawanController::class, 'printQr'])->name('karyawans.print-qr');
+
+    Route::get('absensis', [AbsensiController::class, 'index'])->name('absensis.index');
+    Route::get('absensis/scan', [AbsensiController::class, 'scan'])->name('absensis.scan');
+    Route::post('absensis/scan', [AbsensiController::class, 'storeScan'])->name('absensis.storeScan');
 
     // Profile & Account
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');

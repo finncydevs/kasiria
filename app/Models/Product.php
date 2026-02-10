@@ -21,6 +21,7 @@ class Product extends Model
         'stok',
         'satuan',
         'deskripsi',
+        'gambar',
         'status',
     ];
 

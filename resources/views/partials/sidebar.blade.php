@@ -1,116 +1,116 @@
-<div class="sidebar">
-    <div class="sidebar-header">
-        <div class="logo">K</div>
-        <div>
-            <div class="brand">Kasiria</div>
-            <div class="sidebar-brand-text">Admin Panel</div>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed top-0 left-0 w-64 h-full glass-dark border-r border-white/10 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
+        <!-- Logo -->
+        <div class="h-20 flex items-center px-6 border-b border-white/10">
+            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/30">K</div>
+            <div class="ml-3">
+                <h1 class="text-xl font-bold text-white tracking-wide">Kasiria</h1>
+                <p class="text-xs text-slate-400 uppercase tracking-wider">Admin Panel</p>
+            </div>
         </div>
-    </div>
 
-    {{-- Ambil objek user yang sedang login --}}
-    @php
-        $user = Auth::user();
-    @endphp
+        <!-- Menu -->
+        <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+            @if(in_array(auth()->user()->role, ['admin', 'owner', 'kasir']))
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 px-3">Menu Utama</div>
+            
+            <a href="{{ route('dashboard') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('dashboard') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-home w-6 text-center"></i>
+                <span class="ml-2">Dashboard</span>
+            </a>
+            
+            @if(auth()->user()->role === 'admin')
+            <a href="{{ route('users.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('users.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-users w-6 text-center"></i>
+                <span class="ml-2">Pengguna</span>
+            </a>
+            @endif
+            @endif
 
-    <ul class="sidebar-menu">
-        <li class="sidebar-menu-title">Menu Utama</li>
-        {{-- Dashboard: Hide for Pelanggan, they have their own menu below or mapped differently --}}
-        @if ($user->role !== 'pelanggan')
-        <li>
-            <a href="{{ route('dashboard') }}" class="@if(request()->routeIs('dashboard')) active @endif">
-                <i class="fas fa-home"></i>
-                Dashboard
-            </a>
-        </li>
-        @endif
+            @if(in_array(auth()->user()->role, ['admin', 'owner', 'kasir']))
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2 px-3">Transaksi</div>
 
-        {{-- Start Pelanggan Menu --}}
-        @if ($user->role === 'pelanggan')
-        <li>
-            <a href="{{ route('pelanggan.dashboard') }}" class="@if(request()->routeIs('pelanggan.dashboard')) active @endif">
-                <i class="fas fa-home"></i>
-                Dashboard
+            <a href="{{ route('transactions.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('transactions.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-receipt w-6 text-center"></i>
+                <span class="ml-2">Penjualan</span>
             </a>
-        </li>
-        <li>
-            <a href="{{ route('pelanggan.order') }}" class="@if(request()->routeIs('pelanggan.order')) active @endif">
-                <i class="fas fa-shopping-cart"></i>
-                Order Produk
-            </a>
-        </li>
-        @endif
-        {{-- End Pelanggan Menu --}}
 
-        {{-- Pengguna: Hanya untuk Admin dan Owner --}}
-        @if ($user->role === 'admin' )
-        <li>
-            <a href="{{ route('users.index') }}" class="@if(request()->routeIs('users.*')) active @endif">
-                <i class="fas fa-users"></i>
-                Pengguna
+            <a href="{{ route('products.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('products.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-box w-6 text-center"></i>
+                <span class="ml-2">Produk</span>
             </a>
-        </li>
-        @endif
 
-        @if ($user->role === 'kasir')
-        <li class="sidebar-menu-title">Transaksi</li>
-        {{-- Transaksi: Dapat diakses oleh semua role (kasir, admin, owner) --}}
-        <li>
-            <a href="{{ route('transactions.index') }}" class="@if(request()->routeIs('transactions.*')) active @endif">
-                <i class="fas fa-receipt"></i>
-                Penjualan
+            <a href="{{ route('kategoris.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('kategoris.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-tags w-6 text-center"></i>
+                <span class="ml-2">Kategori</span>
             </a>
-        </li>
-        <li>
-            <a href="{{ route('products.index') }}" class="@if(request()->routeIs('products.*')) active @endif">
-                <i class="fas fa-box"></i>
-                Produk
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('kategoris.index') }}" class="@if(request()->routeIs('kategoris.*')) active @endif">
-                <i class="fas fa-tags"></i>
-                Kategori
-            </a>
-        </li>
-        <li>
-            <a href="{{ route('pelanggans.index') }}" class="@if(request()->routeIs('pelanggans.*')) active @endif">
-                <i class="fas fa-user-friends"></i>
-                Pelanggan
-            </a>
-        </li>
-        @endif
 
-        {{-- Laporan Penjualan: Hanya untuk Admin dan Owner --}}
-        @if ($user->role === 'kasir' || $user->role === 'owner')
-        <li class="sidebar-menu-title">Laporan</li>
-        <li>
-            <a href="{{ route('reports.sales') }}" class="@if(request()->routeIs('reports.*')) active @endif">
-                <i class="fas fa-chart-line"></i>
-                Laporan Penjualan
+            <a href="{{ route('pelanggans.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('pelanggans.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-user-friends w-6 text-center"></i>
+                <span class="ml-2">Pelanggan</span>
             </a>
-        </li>
-        @endif
+            @endif
 
-        {{-- Pengaturan: Hanya untuk Admin dan Owner --}}
-        @if ($user->role === 'admin' || $user->role === 'owner')
-        <li class="sidebar-menu-title">Pengaturan</li>
-        <li>
-            <a href="{{ route('settings') }}" class="@if(request()->routeIs('settings')) active @endif">
-                <i class="fas fa-cog"></i>
-                Pengaturan
+            @if(in_array(auth()->user()->role, ['admin', 'owner']))
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2 px-3">Laporan</div>
+
+            <a href="{{ route('reports.sales') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('reports.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-chart-line w-6 text-center"></i>
+                <span class="ml-2">Laporan Penjualan</span>
             </a>
-        </li>
-        @endif
+            
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2 px-3">Kepegawaian</div>
 
-        <li>
-            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                Keluar
+            <a href="{{ route('karyawans.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('karyawans.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-id-card w-6 text-center"></i>
+                <span class="ml-2">Data Karyawan</span>
             </a>
-        </li>
-    </ul>
 
-    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-        @csrf
-    </form>
-</div>
+            <a href="{{ route('absensis.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('absensis.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-calendar-check w-6 text-center"></i>
+                <span class="ml-2">Laporan Absensi</span>
+            </a>
+
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2 px-3">Pengaturan</div>
+
+            <a href="{{ route('settings') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('settings') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-cog w-6 text-center"></i>
+                <span class="ml-2">Pengaturan</span>
+            </a>
+            @endif
+            
+            @if(auth()->user()->role === 'pelanggan')
+             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2 px-3">Customer Area</div>
+             <a href="{{ route('pelanggan.dashboard') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('pelanggan.dashboard') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-home w-6 text-center"></i>
+                <span class="ml-2">Dashboard</span>
+            </a>
+            <a href="{{ route('pelanggan.order') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('pelanggan.order') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
+                <i class="fas fa-shopping-cart w-6 text-center"></i>
+                <span class="ml-2">Order Produk</span>
+            </a>
+            @endif
+
+            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="flex items-center px-3 py-2.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all">
+                <i class="fas fa-sign-out-alt w-6 text-center"></i>
+                <span class="ml-2">Keluar</span>
+            </a>
+            
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+        </nav>
+        
+        <!-- User Profile Mini -->
+        <div class="p-4 border-t border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold text-sm">
+                    {{ strtoupper(substr(auth()->user()->nama ?? 'U', 0, 1)) }}
+                </div>
+                <div>
+                    <div class="text-sm font-medium text-white">{{ auth()->user()->nama ?? 'User' }}</div>
+                    <div class="text-xs text-slate-400">{{ ucfirst(auth()->user()->role ?? 'Guest') }} • <span class="text-yellow-400"><i class="fas fa-star text-[10px] mr-1"></i>{{ auth()->user()->points ?? 0 }} pts</span></div>
+                </div>
+            </div>
+        </div>
+    </aside>
