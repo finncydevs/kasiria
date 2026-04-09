@@ -16,5 +16,19 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->report(function (\Throwable $e) {
+            // Jangan kirim email untuk error yang wajar seperti 404, validasi, atau belum login
+            if ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException || 
+                $e instanceof \Illuminate\Validation\ValidationException ||
+                $e instanceof \Illuminate\Auth\AuthenticationException) {
+                return;
+            }
+
+            try {
+                // Ganti email_anda@example.com dengan email tujuan Anda
+                \Illuminate\Support\Facades\Mail::to('email_anda@example.com')->send(new \App\Mail\ErrorOccurredMail($e));
+            } catch (\Throwable $mailException) {
+                // Abaikan error pengiriman email agar aplikasi tidak berhenti bekerja (error loop)
+            }
+        });
     })->create();

@@ -13,8 +13,8 @@ class KategoriController extends Controller
         $this->middleware(function ($request, $next) {
             $user = Auth::user();
 
-            // Menggunakan array untuk pengecekan role yang eksplisit (Inklusif: admin ATAU owner)
-            if (!in_array($user->role, ['kasir', 'owner'])) {
+            // Menggunakan array untuk pengecekan role yang eksplisit (Inklusif: admin ATAU owner ATAU kasir)
+            if (!in_array($user->role, ['kasir', 'owner', 'admin'])) {
                 // Jika kasir mencoba mengakses, alihkan ke dashboard
                 return redirect()->route('dashboard')->with('error', 'Anda tidak memiliki akses untuk mengelola Kategori.');
             }

@@ -244,6 +244,7 @@
             let subtotalAll = 0;
             document.querySelectorAll('.subtotal-cell').forEach(cell => {
                 subtotalAll += parseFloat(cell.dataset.value) || 0;
+            });
             // Membership Discount Logic
             const customerSelect = document.getElementById('patient-select');
             const selectedOption = customerSelect.options[customerSelect.selectedIndex];

@@ -29,6 +29,7 @@ class DashboardController extends Controller
     // Default minimum stock threshold (produks table doesn't have min_stock column)
     $minStockThreshold = 10;
     $lowStockProducts = Product::where('stok', '<=', $minStockThreshold)->count();
+    $totalProducts = Product::count();
 
         // Monthly sales trend
         $monthlySales = Transaction::whereDate('created_at', '>=', $thisMonth)
@@ -64,6 +65,7 @@ class DashboardController extends Controller
             'totalSales' => $totalSales,
             'transactionCount' => $transactionCount,
             'totalUsers' => $totalUsers,
+            'totalProducts' => $totalProducts,
             'lowStockProducts' => $lowStockProducts,
             'monthlySales' => $monthlySales,
             'topCashiers' => $topCashiers,

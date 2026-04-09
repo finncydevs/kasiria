@@ -31,17 +31,14 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-slate-400 text-sm font-medium">Total Penjualan</p>
-                        <h3 class="text-2xl font-bold text-white mt-1">Rp 5.2M</h3>
+                        <h3 class="text-2xl font-bold text-white mt-1">Rp {{ number_format($totalSales, 0, ',', '.') }}</h3>
                     </div>
                     <div class="p-2 bg-blue-500/20 rounded-lg text-blue-400">
                         <i class="fas fa-chart-line text-xl"></i>
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-xs">
-                    <span class="text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-2 py-1 rounded-full">
-                        <i class="fas fa-arrow-up"></i> +12%
-                    </span>
-                    <span class="text-slate-500 ml-2">bulan ini</span>
+                    <span class="text-slate-500">hari ini</span>
                 </div>
             </div>
         </div>
@@ -53,17 +50,14 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-slate-400 text-sm font-medium">Jumlah Transaksi</p>
-                        <h3 class="text-2xl font-bold text-white mt-1">245</h3>
+                        <h3 class="text-2xl font-bold text-white mt-1">{{ $transactionCount }}</h3>
                     </div>
                     <div class="p-2 bg-purple-500/20 rounded-lg text-purple-400">
                         <i class="fas fa-receipt text-xl"></i>
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-xs">
-                    <span class="text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-2 py-1 rounded-full">
-                        <i class="fas fa-arrow-up"></i> +8%
-                    </span>
-                    <span class="text-slate-500 ml-2">minggu ini</span>
+                    <span class="text-slate-500">hari ini</span>
                 </div>
             </div>
         </div>
@@ -75,17 +69,14 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-slate-400 text-sm font-medium">Total Pengguna</p>
-                        <h3 class="text-2xl font-bold text-white mt-1">42</h3>
+                        <h3 class="text-2xl font-bold text-white mt-1">{{ $totalUsers }}</h3>
                     </div>
                     <div class="p-2 bg-pink-500/20 rounded-lg text-pink-400">
                         <i class="fas fa-users text-xl"></i>
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-xs">
-                    <span class="text-blue-400 flex items-center gap-1 bg-blue-500/10 px-2 py-1 rounded-full">
-                        <i class="fas fa-plus"></i> 5 new
-                    </span>
-                    <span class="text-slate-500 ml-2">minggu ini</span>
+                    <span class="text-slate-500">pengguna aktif</span>
                 </div>
             </div>
         </div>
@@ -97,16 +88,22 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-slate-400 text-sm font-medium">Produk Aktif</p>
-                        <h3 class="text-2xl font-bold text-white mt-1">156</h3>
+                        <h3 class="text-2xl font-bold text-white mt-1">{{ $totalProducts }}</h3>
                     </div>
                     <div class="p-2 bg-orange-500/20 rounded-lg text-orange-400">
                         <i class="fas fa-box text-xl"></i>
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-xs">
-                    <span class="text-amber-400 flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-full">
-                        <i class="fas fa-exclamation-triangle"></i> 8 low stock
-                    </span>
+                    @if($lowStockProducts > 0)
+                        <span class="text-amber-400 flex items-center gap-1 bg-amber-500/10 px-2 py-1 rounded-full">
+                            <i class="fas fa-exclamation-triangle"></i> {{ $lowStockProducts }} low stock
+                        </span>
+                    @else
+                        <span class="text-emerald-400 flex items-center gap-1 bg-emerald-500/10 px-2 py-1 rounded-full">
+                            <i class="fas fa-check"></i> Semua stok aman
+                        </span>
+                    @endif
                 </div>
             </div>
         </div>
@@ -135,21 +132,27 @@
                 <i class="fas fa-trophy text-yellow-400"></i> Top Kasir
             </h3>
             <div class="space-y-4">
-                @foreach([
-                    ['name' => 'Ahmad Wijaya', 'amount' => 'Rp 1.2M', 'percent' => 90, 'color' => 'bg-yellow-400'],
-                    ['name' => 'Siti Nurhaliza', 'amount' => 'Rp 980K', 'percent' => 75, 'color' => 'bg-slate-400'],
-                    ['name' => 'Budi Santoso', 'amount' => 'Rp 750K', 'percent' => 60, 'color' => 'bg-orange-400']
-                ] as $cashier)
+                @php
+                    $colors = ['bg-yellow-400', 'bg-slate-400', 'bg-orange-400', 'bg-blue-400', 'bg-purple-400'];
+                    $maxTotal = $topCashiers->max('transactions_sum_total') ?: 1;
+                @endphp
+                @forelse($topCashiers as $index => $cashier)
+                @php
+                    $color = $colors[$index % count($colors)];
+                    $percent = (($cashier->transactions_sum_total ?? 0) / $maxTotal) * 100;
+                @endphp
                 <div class="p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-medium text-white">{{ $cashier['name'] }}</span>
-                        <span class="text-sm font-bold text-blue-400">{{ $cashier['amount'] }}</span>
+                        <span class="text-sm font-medium text-white">{{ $cashier->nama }}</span>
+                        <span class="text-sm font-bold text-blue-400">Rp {{ number_format($cashier->transactions_sum_total ?? 0, 0, ',', '.') }}</span>
                     </div>
                     <div class="w-full bg-slate-700 rounded-full h-1.5">
-                        <div class="{{ $cashier['color'] }} h-1.5 rounded-full" style="width: {{ $cashier['percent'] }}%"></div>
+                        <div class="{{ $color }} h-1.5 rounded-full" style="width: {{ $percent }}%"></div>
                     </div>
                 </div>
-                @endforeach
+                @empty
+                <div class="text-center text-slate-400 text-sm mt-4">Belum ada data kasir.</div>
+                @endforelse
             </div>
             <div class="mt-6 text-center">
                 <a href="#" class="text-xs text-blue-400 hover:text-blue-300">Lihat Leaderboard Lengkap</a>
@@ -178,24 +181,24 @@
                     </tr>
                 </thead>
                 <tbody class="text-sm divide-y divide-white/5">
-                    @foreach([
-                        ['id' => '#TRX001', 'cust' => 'Andi Pratama', 'cash' => 'Ahmad Wijaya', 'total' => 'Rp 250.000', 'status' => 'Selesai', 'time' => '10:30 AM', 'status_color' => 'bg-emerald-500/20 text-emerald-400'],
-                        ['id' => '#TRX002', 'cust' => 'Rini Kusuma', 'cash' => 'Siti Nurhaliza', 'total' => 'Rp 180.000', 'status' => 'Selesai', 'time' => '10:45 AM', 'status_color' => 'bg-emerald-500/20 text-emerald-400'],
-                        ['id' => '#TRX003', 'cust' => 'Doni Setiawan', 'cash' => 'Budi Santoso', 'total' => 'Rp 420.000', 'status' => 'Pending', 'time' => '11:00 AM', 'status_color' => 'bg-yellow-500/20 text-yellow-400']
-                    ] as $trx)
+                    @forelse($recentTransactions as $trx)
                     <tr class="hover:bg-white/5 transition-colors">
-                        <td class="p-3 font-medium text-white">{{ $trx['id'] }}</td>
-                        <td class="p-3 text-slate-300">{{ $trx['cust'] }}</td>
-                        <td class="p-3 text-slate-300">{{ $trx['cash'] }}</td>
-                        <td class="p-3 font-semibold text-white">{{ $trx['total'] }}</td>
+                        <td class="p-3 font-medium text-white">#TRX{{ str_pad($trx->id, 5, '0', STR_PAD_LEFT) }}</td>
+                        <td class="p-3 text-slate-300">{{ $trx->pelanggan->nama ?? 'Umum' }}</td>
+                        <td class="p-3 text-slate-300">{{ $trx->cashier->nama ?? '-' }}</td>
+                        <td class="p-3 font-semibold text-white">Rp {{ number_format($trx->total, 0, ',', '.') }}</td>
                         <td class="p-3">
-                            <span class="px-2 py-1 rounded-full text-xs font-medium {{ $trx['status_color'] }}">
-                                {{ $trx['status'] }}
+                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400">
+                                Selesai
                             </span>
                         </td>
-                        <td class="p-3 text-slate-400">{{ $trx['time'] }}</td>
+                        <td class="p-3 text-slate-400">{{ $trx->created_at->format('h:i A') }}</td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="6" class="text-center p-3 text-slate-400">Belum ada transaksi.</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -209,7 +212,7 @@
         var options = {
             series: [{
                 name: 'Penjualan',
-                data: [31, 40, 28, 51, 42, 109, 100]
+                data: {!! json_encode($monthlySales->pluck('total')->toArray()) !!}
             }],
             chart: {
                 height: 320,
@@ -232,7 +235,7 @@
                 }
             },
             xaxis: {
-                categories: ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
+                categories: {!! json_encode($monthlySales->pluck('date')->map(function($date) { return \Carbon\Carbon::parse($date)->format('d M'); })->toArray()) !!},
                 labels: { style: { colors: '#94a3b8' } },
                 axisBorder: { show: false },
                 axisTicks: { show: false }

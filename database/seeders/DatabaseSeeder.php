@@ -135,7 +135,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'nama' => 'Super Admin',
             'username' => 'admin',
-            'email' => 'admin@kasiria.com',
+            'email' => 'admin@gmail.com',
             'password' => Hash::make('password'), // Password: password
             'role' => 'admin',
             'no_hp' => '081122334455',
@@ -146,7 +146,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'nama' => 'Pemilik Toko',
             'username' => 'owner',
-            'email' => 'owner@kasiria.com',
+            'email' => 'owner@gmail.com',
             'password' => Hash::make('password'), // Password: password
             'role' => 'owner',
             'no_hp' => '081199887766',
@@ -157,7 +157,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'nama' => 'Kasir Utama',
             'username' => 'kasir',
-            'email' => 'kasir@kasiria.com',
+            'email' => 'kasir@gmail.com',
             'password' => Hash::make('password'), // Password: password
             'role' => 'kasir',
             'no_hp' => '085544332211',
@@ -166,7 +166,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'nama' => 'Pelanggan Setia',
             'username' => 'pelanggan',
-            'email' => 'pelanggan@kasiria.com',
+            'email' => 'pelanggan@gmail.com',
             'role' => 'pelanggan',
             'password' => bcrypt('password'),
             'points' => 1500, // Silver Member

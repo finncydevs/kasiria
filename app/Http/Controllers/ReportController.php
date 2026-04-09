@@ -18,9 +18,9 @@ class ReportController extends Controller
         $this->middleware(function ($request, $next) {
             $user = Auth::user();
 
-            if (!in_array($user->role, ['owner', 'kasir'])) {
+            if (!in_array($user->role, ['owner', 'kasir', 'admin'])) {
                 // Jika kasir mencoba mengakses, alihkan ke dashboard
-                return redirect()->route('dashboard')->with('error', 'Anda tidak memiliki akses untuk mengelola Kategori.');
+                return redirect()->route('dashboard')->with('error', 'Anda tidak memiliki akses untuk mengelola Laporan.');
             }
             return $next($request);
         });
