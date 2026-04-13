@@ -30,6 +30,9 @@
                 <button onclick="switchTab('backup')" class="w-full text-left px-4 py-3 rounded-xl transition-all flex items-center gap-3 tab-btn hover:bg-white/5 text-slate-400 border border-transparent" id="btn-backup">
                     <i class="fas fa-database"></i> Database
                 </button>
+                <button onclick="switchTab('absensi')" class="w-full text-left px-4 py-3 rounded-xl transition-all flex items-center gap-3 tab-btn hover:bg-white/5 text-slate-400 border border-transparent" id="btn-absensi">
+                    <i class="fas fa-calendar-check"></i> Absensi
+                </button>
             </div>
         </div>
 
@@ -232,6 +235,123 @@
                     </div>
                 </div>
             </div>
+            <!-- Absensi Tab -->
+            <div id="tab-absensi" class="tab-content hidden opacity-0 transition-opacity duration-300">
+                <div class="glass-panel">
+                    <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 border-b border-white/10 pb-4">
+                        <i class="fas fa-calendar-check text-emerald-400"></i> Pengaturan Jadwal Absensi
+                    </h2>
+
+                    <form action="{{ route('settings.absensi.update') }}" method="POST">
+                        @csrf
+                        <div class="space-y-8">
+
+                            {{-- Jam Kerja --}}
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <i class="fas fa-clock text-blue-400"></i> Jam Kerja
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-400 mb-1">Jam Masuk</label>
+                                        <input type="time" name="absensi_jam_masuk"
+                                            value="{{ old('absensi_jam_masuk', $settings['absensi_jam_masuk'] ?? '08:00') }}"
+                                            class="glass-input w-full" required>
+                                        <p class="text-xs text-slate-500 mt-1">Jam masuk resmi karyawan</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-400 mb-1">Jam Pulang</label>
+                                        <input type="time" name="absensi_jam_pulang"
+                                            value="{{ old('absensi_jam_pulang', $settings['absensi_jam_pulang'] ?? '17:00') }}"
+                                            class="glass-input w-full" required>
+                                        <p class="text-xs text-slate-500 mt-1">Jam pulang resmi karyawan</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-400 mb-1">Toleransi Terlambat</label>
+                                        <div class="relative">
+                                            <input type="number" name="absensi_batas_terlambat" min="0" max="120"
+                                                value="{{ old('absensi_batas_terlambat', $settings['absensi_batas_terlambat'] ?? 15) }}"
+                                                class="glass-input w-full pr-14" required>
+                                            <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">menit</span>
+                                        </div>
+                                        <p class="text-xs text-slate-500 mt-1">Menit setelah jam masuk sebelum dianggap terlambat</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Hari Kerja --}}
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <i class="fas fa-calendar-week text-purple-400"></i> Hari Kerja
+                                </h3>
+                                @php
+                                    $hariList    = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+                                    $hariAktif   = array_filter(array_map('trim',
+                                        explode(',', $settings['absensi_hari_kerja'] ?? 'Senin,Selasa,Rabu,Kamis,Jumat')
+                                    ));
+                                    $hariColors  = [
+                                        'Senin'   => 'blue',
+                                        'Selasa'  => 'blue',
+                                        'Rabu'    => 'blue',
+                                        'Kamis'   => 'blue',
+                                        'Jumat'   => 'blue',
+                                        'Sabtu'   => 'amber',
+                                        'Minggu'  => 'red',
+                                    ];
+                                @endphp
+                                <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
+                                    @foreach($hariList as $hari)
+                                    @php
+                                        $c       = $hariColors[$hari];
+                                        $checked = in_array($hari, $hariAktif);
+                                    @endphp
+                                    <label class="day-card relative flex flex-col items-center gap-2 p-4 rounded-xl border cursor-pointer transition-all
+                                        {{ $checked
+                                            ? "bg-{$c}-500/20 border-{$c}-500/50 text-{$c}-300"
+                                            : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/20' }}">
+                                        <input type="checkbox" name="absensi_hari_kerja[]" value="{{ $hari }}"
+                                            {{ $checked ? 'checked' : '' }}
+                                            class="sr-only day-checkbox">
+                                        <i class="fas {{ $hari === 'Minggu' ? 'fa-star' : ($hari === 'Sabtu' ? 'fa-sun' : 'fa-briefcase') }} text-xl"></i>
+                                        <span class="text-xs font-semibold">{{ $hari }}</span>
+                                        <span class="absolute top-2 right-2 w-2 h-2 rounded-full {{ $checked ? "bg-{$c}-400" : 'bg-white/20' }}"></span>
+                                    </label>
+                                    @endforeach
+                                </div>
+                                <p class="text-xs text-slate-500 mt-3">Scan absensi hanya diperbolehkan pada hari kerja yang dipilih.</p>
+                            </div>
+
+                            {{-- Preview --}}
+                            <div class="bg-white/5 rounded-xl p-5 border border-white/10">
+                                <h4 class="text-slate-300 font-medium mb-3 flex items-center gap-2">
+                                    <i class="fas fa-eye text-slate-400"></i> Ringkasan Jadwal
+                                </h4>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                                    <div class="bg-blue-500/10 rounded-lg p-3 border border-blue-500/20">
+                                        <p class="text-blue-300 text-xs uppercase tracking-wider mb-1">Jam Masuk</p>
+                                        <p class="text-white font-bold text-lg" id="preview-masuk">{{ $settings['absensi_jam_masuk'] ?? '08:00' }}</p>
+                                    </div>
+                                    <div class="bg-emerald-500/10 rounded-lg p-3 border border-emerald-500/20">
+                                        <p class="text-emerald-300 text-xs uppercase tracking-wider mb-1">Jam Pulang</p>
+                                        <p class="text-white font-bold text-lg" id="preview-pulang">{{ $settings['absensi_jam_pulang'] ?? '17:00' }}</p>
+                                    </div>
+                                    <div class="bg-amber-500/10 rounded-lg p-3 border border-amber-500/20">
+                                        <p class="text-amber-300 text-xs uppercase tracking-wider mb-1">Batas Terlambat</p>
+                                        <p class="text-white font-bold text-lg" id="preview-batas">{{ $settings['absensi_batas_terlambat'] ?? 15 }} menit</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-4 border-t border-white/10">
+                                <button type="submit" class="glass-btn bg-emerald-600/80 hover:bg-emerald-600 text-white px-6 py-2.5 shadow-lg shadow-emerald-500/20">
+                                    <i class="fas fa-save mr-2"></i> Simpan Pengaturan Absensi
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -259,6 +379,41 @@
                 activeContent.classList.remove('opacity-0');
             }, 50);
         }
+
+        // --- Day-card checkbox toggle ---
+        document.querySelectorAll('.day-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const cb     = card.querySelector('.day-checkbox');
+                const dot    = card.querySelector('span.absolute');
+                cb.checked   = !cb.checked;
+
+                if (cb.checked) {
+                    card.classList.remove('bg-white/5', 'border-white/10', 'text-slate-400');
+                    card.classList.add('bg-blue-500/20', 'border-blue-500/50', 'text-blue-300');
+                    dot.classList.remove('bg-white/20');
+                    dot.classList.add('bg-blue-400');
+                } else {
+                    card.classList.remove('bg-blue-500/20', 'border-blue-500/50', 'text-blue-300',
+                                          'bg-amber-500/20', 'border-amber-500/50', 'text-amber-300',
+                                          'bg-red-500/20',  'border-red-500/50',  'text-red-300');
+                    card.classList.add('bg-white/5', 'border-white/10', 'text-slate-400');
+                    dot.className = 'absolute top-2 right-2 w-2 h-2 rounded-full bg-white/20';
+                }
+            });
+        });
+
+        // --- Live preview for time/batas inputs ---
+        const masukIn  = document.querySelector('[name="absensi_jam_masuk"]');
+        const pulangIn = document.querySelector('[name="absensi_jam_pulang"]');
+        const batasIn  = document.querySelector('[name="absensi_batas_terlambat"]');
+        if (masukIn)  masukIn.addEventListener('input',  () => { const el = document.getElementById('preview-masuk');  if(el) el.textContent = masukIn.value  || '-'; });
+        if (pulangIn) pulangIn.addEventListener('input', () => { const el = document.getElementById('preview-pulang'); if(el) el.textContent = pulangIn.value || '-'; });
+        if (batasIn)  batasIn.addEventListener('input',  () => { const el = document.getElementById('preview-batas');  if(el) el.textContent = (batasIn.value || '0') + ' menit'; });
+
+        // --- Auto-open absensi tab after redirect ---
+        @if(session('active_tab') === 'absensi')
+        document.addEventListener('DOMContentLoaded', () => switchTab('absensi'));
+        @endif
     </script>
     @endpush
 @endsection

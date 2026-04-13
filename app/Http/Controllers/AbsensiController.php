@@ -36,9 +36,43 @@ class AbsensiController extends Controller
             'kode_karyawan' => 'required|exists:karyawans,kode_karyawan',
         ]);
 
+        // --- Load absensi schedule settings ---
+        $settingsMap = \App\Models\Setting::whereIn('key', [
+            'absensi_jam_masuk',
+            'absensi_jam_pulang',
+            'absensi_batas_terlambat',
+            'absensi_hari_kerja',
+        ])->pluck('value', 'key');
+
+        $jamMasuk       = $settingsMap['absensi_jam_masuk']       ?? '08:00';
+        $jamPulang      = $settingsMap['absensi_jam_pulang']      ?? '17:00';
+        $batasTerlambat = (int) ($settingsMap['absensi_batas_terlambat'] ?? 15);
+        $hariKerjaStr   = $settingsMap['absensi_hari_kerja']      ?? 'Senin,Selasa,Rabu,Kamis,Jumat';
+        $hariKerjaArr   = array_filter(array_map('trim', explode(',', $hariKerjaStr)));
+
+        // Map Carbon day names (in Indonesian) to check today
+        $hariIniMap = [
+            0 => 'Minggu',
+            1 => 'Senin',
+            2 => 'Selasa',
+            3 => 'Rabu',
+            4 => 'Kamis',
+            5 => 'Jumat',
+            6 => 'Sabtu',
+        ];
+        $hariIni = $hariIniMap[Carbon::now()->dayOfWeek];
+
+        // --- Reject if today is not a work day ---
+        if (!empty($hariKerjaArr) && !in_array($hariIni, $hariKerjaArr)) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => "Hari ini ({$hariIni}) bukan hari kerja.",
+            ], 400);
+        }
+
         $karyawan = Karyawan::where('kode_karyawan', $request->kode_karyawan)->firstOrFail();
-        $today = Carbon::today()->toDateString();
-        $now = Carbon::now()->toTimeString();
+        $today    = Carbon::today()->toDateString();
+        $now      = Carbon::now()->toTimeString();
 
         // Check existing attendance for today
         $absensi = Absensi::where('karyawan_id', $karyawan->id)
@@ -46,20 +80,26 @@ class AbsensiController extends Controller
                           ->first();
 
         if (!$absensi) {
-            // Check In
+            // --- Determine check-in status ---
+            $batasJam = Carbon::createFromFormat('H:i', $jamMasuk)->addMinutes($batasTerlambat);
+            $status   = Carbon::now()->greaterThan($batasJam) ? 'terlambat' : 'hadir';
+
             Absensi::create([
                 'karyawan_id' => $karyawan->id,
-                'tanggal' => $today,
-                'jam_masuk' => $now,
-                'status' => 'hadir',
+                'tanggal'     => $today,
+                'jam_masuk'   => $now,
+                'status'      => $status,
             ]);
 
+            $label = $status === 'terlambat' ? 'Check In (Terlambat)' : 'Check In';
+
             return response()->json([
-                'status' => 'success',
-                'message' => 'Check In Berhasil!',
+                'status'   => 'success',
+                'message'  => "{$label} Berhasil!",
                 'karyawan' => $karyawan->nama,
-                'time' => $now,
-                'type' => 'in'
+                'time'     => $now,
+                'type'     => 'in',
+                'late'     => $status === 'terlambat',
             ]);
         } elseif ($absensi->jam_keluar == null) {
             // Check Out
@@ -68,17 +108,17 @@ class AbsensiController extends Controller
             ]);
 
             return response()->json([
-                'status' => 'success',
-                'message' => 'Check Out Berhasil!',
+                'status'   => 'success',
+                'message'  => 'Check Out Berhasil!',
                 'karyawan' => $karyawan->nama,
-                'time' => $now,
-                'type' => 'out'
+                'time'     => $now,
+                'type'     => 'out'
             ]);
         } else {
             // Already Checked Out
             return response()->json([
-                'status' => 'error',
-                'message' => 'Anda sudah melakukan Check Out hari ini.',
+                'status'   => 'error',
+                'message'  => 'Anda sudah melakukan Check Out hari ini.',
                 'karyawan' => $karyawan->nama
             ], 400);
         }

@@ -21,9 +21,11 @@
                 <p class="text-slate-400 text-sm mt-1">Kelola data pelanggan dan level keanggotaan.</p>
             </div>
             
+            @if(auth()->check() && auth()->user()->isAdmin())
             <a href="{{ route('pelanggans.create') }}" class="glass-btn flex items-center gap-2">
                 <i class="fas fa-plus"></i> <span>Tambah Pelanggan</span>
             </a>
+            @endif
         </div>
 
         @if(session('success'))
@@ -114,6 +116,7 @@
                                     <a href="{{ route('pelanggans.show', $pelanggan) }}" class="p-2 rounded-lg hover:bg-white/10 text-blue-400 transition-colors" title="Lihat">
                                         <i class="fas fa-eye"></i>
                                     </a>
+                                    @if(auth()->check() && auth()->user()->isAdmin())
                                     <a href="{{ route('pelanggans.edit', $pelanggan) }}" class="p-2 rounded-lg hover:bg-white/10 text-yellow-400 transition-colors" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
@@ -124,6 +127,7 @@
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

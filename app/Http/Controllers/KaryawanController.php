@@ -11,6 +11,16 @@ use Illuminate\Support\Str;
 class KaryawanController extends Controller
 {
     /**
+     * Abort with 403 if user is not admin.
+     */
+    private function adminOnly()
+    {
+        if (!auth()->check() || !auth()->user()->isAdmin()) {
+            abort(403, 'Akses ditolak.');
+        }
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
@@ -24,6 +34,7 @@ class KaryawanController extends Controller
      */
     public function create()
     {
+        $this->adminOnly();
         $users = User::whereDoesntHave('karyawan')->get(); // Users not yet linked to a karyawan
         return view('karyawans.create', compact('users'));
     }
@@ -33,6 +44,7 @@ class KaryawanController extends Controller
      */
     public function store(Request $request)
     {
+        $this->adminOnly();
         $request->validate([
             'nama' => 'required|string|max:255',
             'jabatan' => 'required|string|max:255',
@@ -70,6 +82,7 @@ class KaryawanController extends Controller
      */
     public function edit(Karyawan $karyawan)
     {
+        $this->adminOnly();
         $users = User::whereDoesntHave('karyawan')->orWhere('id', $karyawan->user_id)->get();
         return view('karyawans.edit', compact('karyawan', 'users'));
     }
@@ -79,6 +92,7 @@ class KaryawanController extends Controller
      */
     public function update(Request $request, Karyawan $karyawan)
     {
+        $this->adminOnly();
         $request->validate([
             'nama' => 'required|string|max:255',
             'jabatan' => 'required|string|max:255',
@@ -101,6 +115,7 @@ class KaryawanController extends Controller
      */
     public function destroy(Karyawan $karyawan)
     {
+        $this->adminOnly();
         $karyawan->delete();
         return redirect()->route('karyawans.index')->with('success', 'Karyawan berhasil dihapus.');
     }

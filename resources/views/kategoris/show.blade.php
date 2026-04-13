@@ -26,6 +26,7 @@
                     <i class="fas fa-tag text-blue-400"></i> Informasi
                 </h2>
                 <div class="flex gap-2">
+                    @if(auth()->check() && auth()->user()->isAdmin())
                     <a href="{{ route('kategoris.edit', $kategori) }}" class="p-2 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition-colors" title="Edit">
                         <i class="fas fa-edit"></i>
                     </a>
@@ -35,6 +36,7 @@
                             <i class="fas fa-trash"></i>
                         </button>
                     </form>
+                    @endif
                 </div>
             </div>
 
@@ -111,7 +113,9 @@
                             <tr>
                                 <td colspan="5" class="p-8 text-center text-slate-500">
                                     <p>Belum ada produk dalam kategori ini.</p>
+                                    @if(auth()->check() && auth()->user()->isAdmin())
                                     <a href="{{ route('products.create') }}" class="text-blue-400 text-sm hover:underline mt-2 inline-block">Tambah Produk</a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse

@@ -27,19 +27,24 @@
             @endif
             @endif
 
-            @if(in_array(auth()->user()->role, ['admin', 'owner', 'kasir']))
+            @if(in_array(auth()->user()->role, ['admin', 'kasir']))
             <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2 px-3">Transaksi</div>
 
             <a href="{{ route('transactions.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('transactions.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
                 <i class="fas fa-receipt w-6 text-center"></i>
                 <span class="ml-2">Penjualan</span>
             </a>
+            @endif
 
+            @if(in_array(auth()->user()->role, ['admin', 'owner', 'kasir']))
+            <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-6 mb-2 px-3">Inventaris</div>
             <a href="{{ route('products.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('products.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
                 <i class="fas fa-box w-6 text-center"></i>
                 <span class="ml-2">Produk</span>
             </a>
+            @endif
 
+            @if(in_array(auth()->user()->role, ['admin', 'kasir']))
             <a href="{{ route('kategoris.index') }}" class="flex items-center px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-all {{ request()->routeIs('kategoris.*') ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-500' : '' }}">
                 <i class="fas fa-tags w-6 text-center"></i>
                 <span class="ml-2">Kategori</span>

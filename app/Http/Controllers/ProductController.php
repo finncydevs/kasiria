@@ -9,6 +9,16 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     /**
+     * Abort with 403 if user is not admin.
+     */
+    private function adminOnly()
+    {
+        if (!auth()->check() || !auth()->user()->isAdmin()) {
+            abort(403, 'Akses ditolak.');
+        }
+    }
+
+    /**
      * Display a listing of products.
      */
     public function index()
@@ -28,6 +38,7 @@ class ProductController extends Controller
      */
     public function create()
     {
+        $this->adminOnly();
         $kategoris = Kategori::active()->orderBy('nama_kategori')->get();
         return view('products.create', compact('kategoris'));
     }
@@ -37,6 +48,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $this->adminOnly();
         $validated = $request->validate([
             'nama_produk' => 'required|string|max:255',
             'kode_barcode' => 'required|string|max:255|unique:produks',
@@ -76,6 +88,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
+        $this->adminOnly();
         $kategoris = Kategori::active()->orderBy('nama_kategori')->get();
         $product->load('kategori');
         return view('products.edit', compact('product', 'kategoris'));
@@ -86,6 +99,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        $this->adminOnly();
         $validated = $request->validate([
             'nama_produk' => 'required|string|max:255',
             'kode_barcode' => 'required|string|max:255|unique:produks,kode_barcode,' . $product->id,
@@ -120,6 +134,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        $this->adminOnly();
         if ($product->gambar && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->gambar)) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($product->gambar);
         }
@@ -132,6 +147,7 @@ class ProductController extends Controller
      */
     public function toggleStatus(Product $product)
     {
+        $this->adminOnly();
         $product->update(['status' => !$product->status]);
         return back()->with('success', 'Status produk berhasil diubah.');
     }

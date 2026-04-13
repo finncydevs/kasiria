@@ -28,6 +28,7 @@
                         <i class="fas fa-user-circle text-blue-400"></i> Profil
                     </h2>
                     <div class="flex gap-2">
+                        @if(auth()->check() && auth()->user()->isAdmin())
                         <a href="{{ route('pelanggans.edit', $pelanggan) }}" class="p-2 rounded-lg bg-yellow-500/10 text-yellow-400 hover:bg-yellow-500/20 transition-colors" title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>
@@ -37,6 +38,7 @@
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
+                        @endif
                     </div>
                 </div>
 

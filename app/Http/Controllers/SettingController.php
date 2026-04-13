@@ -40,11 +40,16 @@ class SettingController extends Controller
 
         // Default values jika belum ada di database
         $defaults = [
-            'app_name' => config('app.name', 'Kasiria'),
-            'app_description' => 'Sistem Manajemen Kasir Terintegrasi',
-            'currency' => 'IDR',
-            'decimal_places' => 2,
-            'tax_rate' => 0,
+            'app_name'                => config('app.name', 'Kasiria'),
+            'app_description'         => 'Sistem Manajemen Kasir Terintegrasi',
+            'currency'                => 'IDR',
+            'decimal_places'          => 2,
+            'tax_rate'                => 0,
+            // Absensi defaults
+            'absensi_jam_masuk'       => '08:00',
+            'absensi_jam_pulang'      => '17:00',
+            'absensi_batas_terlambat' => 15,
+            'absensi_hari_kerja'      => 'Senin,Selasa,Rabu,Kamis,Jumat',
         ];
 
         $settings = array_merge($defaults, $settings);
@@ -74,6 +79,44 @@ class SettingController extends Controller
         );
 
         return back()->with('success', 'Pengaturan berhasil diperbarui.');
+    }
+
+    /**
+     * Update attendance (absensi) schedule settings.
+     */
+    public function updateAbsensi(Request $request)
+    {
+        $validated = $request->validate([
+            'absensi_jam_masuk'       => 'required|date_format:H:i',
+            'absensi_jam_pulang'      => 'required|date_format:H:i|after:absensi_jam_masuk',
+            'absensi_batas_terlambat' => 'required|integer|min:0|max:120',
+            'absensi_hari_kerja'      => 'nullable|array',
+            'absensi_hari_kerja.*'    => 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
+        ]);
+
+        $hariKerja = isset($validated['absensi_hari_kerja'])
+            ? implode(',', $validated['absensi_hari_kerja'])
+            : '';
+
+        \App\Models\Setting::updateOrCreate(
+            ['key' => 'absensi_jam_masuk'],
+            ['value' => $validated['absensi_jam_masuk']]
+        );
+        \App\Models\Setting::updateOrCreate(
+            ['key' => 'absensi_jam_pulang'],
+            ['value' => $validated['absensi_jam_pulang']]
+        );
+        \App\Models\Setting::updateOrCreate(
+            ['key' => 'absensi_batas_terlambat'],
+            ['value' => $validated['absensi_batas_terlambat']]
+        );
+        \App\Models\Setting::updateOrCreate(
+            ['key' => 'absensi_hari_kerja'],
+            ['value' => $hariKerja]
+        );
+
+        return back()->with('success', 'Pengaturan absensi berhasil disimpan.')
+                     ->with('active_tab', 'absensi');
     }
 
     /**

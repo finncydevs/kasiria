@@ -119,6 +119,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user is owner.
+     */
+    public function isOwner()
+    {
+        return $this->role === 'owner';
+    }
+
+    /**
      * Check if user is pelanggan.
      */
     public function isPelanggan()

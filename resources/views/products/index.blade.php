@@ -21,9 +21,11 @@
                 <p class="text-slate-400 text-sm mt-1">Kelola inventaris, harga, dan stok produk.</p>
             </div>
             
+            @if(auth()->check() && auth()->user()->isAdmin())
             <a href="{{ route('products.create') }}" class="glass-btn flex items-center gap-2">
                 <i class="fas fa-plus"></i> <span>Tambah Produk</span>
             </a>
+            @endif
         </div>
 
         @if(session('success'))
@@ -114,6 +116,7 @@
                                 @endif
                             </td>
                             <td class="p-4 text-center">
+                                @if(auth()->check() && auth()->user()->isAdmin())
                                 <div class="flex justify-center gap-2">
                                     <a href="{{ route('products.edit', $product) }}" class="p-2 rounded-lg hover:bg-white/10 text-yellow-400 transition-colors" title="Edit">
                                         <i class="fas fa-edit"></i>
@@ -126,6 +129,9 @@
                                         </button>
                                     </form>
                                 </div>
+                                @else
+                                <span class="text-slate-500 text-xs">-</span>
+                                @endif
                             </td>
                         </tr>
                     @empty

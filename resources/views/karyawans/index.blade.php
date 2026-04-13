@@ -31,10 +31,12 @@
             <input type="text" id="searchInput" class="glass-input pl-10 w-full" placeholder="Cari karyawan...">
         </div>
         
+        @if(auth()->check() && auth()->user()->isAdmin())
         <a href="{{ route('karyawans.create') }}" class="glass-btn flex items-center gap-2">
             <i class="fas fa-plus"></i>
             <span>Tambah Karyawan</span>
         </a>
+        @endif
     </div>
 
     <!-- Employee Grid -->
@@ -84,6 +86,7 @@
                         <i class="fas fa-qrcode"></i> QR Code
                     </a>
                     
+                    @if(auth()->check() && auth()->user()->isAdmin())
                     <div class="flex items-center gap-2">
                         <a href="{{ route('karyawans.edit', $karyawan->id) }}" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-yellow-400 transition-colors" title="Edit">
                             <i class="fas fa-edit text-xs"></i>
@@ -96,6 +99,7 @@
                             </button>
                         </form>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>

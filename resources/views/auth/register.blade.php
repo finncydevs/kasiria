@@ -99,13 +99,14 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1.5 uppercase tracking-wide">No. HP</label>
-                        <input type="text" name="no_hp" class="glass-input w-full" placeholder="08..." value="{{ old('no_hp') }}">
+                   
+     <input type="text" name="no_hp" class="glass-input w-full" placeholder="08..." value="{{ old('no_hp') }}">
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-xs font-medium text-slate-300 mb-1.5 uppercase tracking-wide">Email</label>
-                    <input type="email" name="email" class="glass-input w-full" placeholder="user@kasiria.com" value="{{ old('email') }}" required>
+                    <input type="email" name="email" class="glass-input w-full" placeholder="user@gmail.com" value="{{ old('email') }}" required>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mb-6">

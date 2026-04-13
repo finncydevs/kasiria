@@ -24,9 +24,11 @@
                 <h2 class="text-xl font-semibold text-white">Detail Produk</h2>
             </div>
             <div class="flex gap-2">
+                @if(auth()->check() && auth()->user()->isAdmin())
                 <a href="{{ route('products.edit', $product) }}" class="glass-btn text-sm px-4 py-2 flex items-center gap-2 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10">
                     <i class="fas fa-edit"></i> Edit
                 </a>
+                @endif
                 <a href="{{ route('products.index') }}" class="glass-btn text-sm px-4 py-2">
                     Kembali
                 </a>
@@ -103,6 +105,7 @@
                         </div>
                     </div>
                     
+                    @if(auth()->check() && auth()->user()->isAdmin())
                     <div class="mt-8 pt-4 border-t border-white/5 flex justify-end">
                          <form action="{{ route('products.destroy', $product) }}" method="POST" onsubmit="return confirmSubmit(event, 'Hapus produk ini secara permanen? Data yang dihapus tidak dapat dikembalikan.', 'Hapus Produk', 'delete')">
                             @csrf
@@ -112,6 +115,7 @@
                             </button>
                         </form>
                     </div>
+                    @endif
                 </div>
             </div>
         </div>

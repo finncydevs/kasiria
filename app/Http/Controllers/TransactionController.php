@@ -28,16 +28,13 @@ class TransactionController extends Controller
 
     public function create()
     {
-        // Assuming column is 'stok'
         $products = Product::where('status', true)->where('stok', '>', 0)->get();
         $pelanggans = Pelanggan::all();
 
-        // Ensure this method exists in your Model, or remove it if using auto-increment ID
         $transactionNumber = method_exists(Transaction::class, 'generateTransactionNumber')
             ? Transaction::generateTransactionNumber()
             : 'TRX-' . time();
 
-        // Get Tax Rate
         $taxRate = \App\Models\Setting::where('key', 'tax_rate')->value('value') ?? 0;
 
         return view('transactions.create', compact('products', 'pelanggans', 'transactionNumber', 'taxRate'));
@@ -109,6 +106,8 @@ class TransactionController extends Controller
 
             $change = $request->amount_paid - $grandTotal;
 
+            $isOnlinePayment = ($validated['payment_option'] === 'pay_now' && $request->payment_method !== 'cash');
+
             // Create Transaction Header
             $transaction = Transaction::create([
                 'transaction_number' => $request->transaction_number ?? 'TRX-'.time(), // Handle logic
@@ -119,10 +118,10 @@ class TransactionController extends Controller
                 'discount'       => $globalDiscount,
                 'tax'            => $globalTax,
                 'total'          => $grandTotal,
-                'amount_paid'    => $validated['payment_option'] === 'pay_now' ? 0 : $request->amount_paid,
-                'change'         => $validated['payment_option'] === 'pay_now' ? 0 : $change,
+                'amount_paid'    => $isOnlinePayment ? 0 : $request->amount_paid,
+                'change'         => $isOnlinePayment ? 0 : $change,
                 'notes'          => $request->notes,
-                'status'         => $validated['payment_option'] === 'pay_now' ? 'pending' : 'completed',
+                'status'         => $isOnlinePayment ? 'pending' : 'completed',
             ]);
 
             // Create Transaction Items
@@ -138,8 +137,8 @@ class TransactionController extends Controller
 
             DB::commit();
 
-            // If pay_now, redirect to payment page
-            if ($validated['payment_option'] === 'pay_now') {
+            // If online payment via Midtrans, redirect to payment page
+            if ($isOnlinePayment) {
                 return redirect()->route('payment.snap', $transaction->id)
                                  ->with('success', 'Silakan lanjutkan pembayaran.');
             }
@@ -177,9 +176,9 @@ class TransactionController extends Controller
 
         try {
             DB::beginTransaction();
-            
+
             $transaction->update(['status' => 'completed']);
-            
+
             // If points/commission logic needs to happen on approval instead of creation
             // It could be moved here. Current logic awards points on creation.
 

@@ -36,15 +36,11 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
-    
-// Protected Routes (Authenticated Users)
+
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard
 
-    Route::get('/bakso/{baksoapa} ', function ($baksoapa) {
-        return 'bakso apa kamu?     '. $baksoapa;
-    })->name('ucan');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // User Management (Admin Only)
@@ -90,6 +86,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('settings', [SettingController::class, 'index'])->name('settings');
         Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
         Route::post('settings/backup', [SettingController::class, 'backup'])->name('settings.backup');
+        Route::post('settings/absensi', [SettingController::class, 'updateAbsensi'])->name('settings.absensi.update');
 
     // Absensi System
     Route::resource('karyawans', KaryawanController::class);
