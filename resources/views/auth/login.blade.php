@@ -210,7 +210,7 @@
 
                     <!-- Slide 1 -->
                     <div class="carousel-slide">
-                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80" alt="Kasir modern">
+                        <img src="{{ asset('assets/img/login-slides/image.png') }}" alt="Kasir modern">
                         <div class="carousel-caption">
                             <div class="carousel-caption-inner">
                                 <i class="fas fa-cash-register text-blue-400 text-xl mb-2" style="display:block"></i>
@@ -222,7 +222,7 @@
 
                     <!-- Slide 2 -->
                     <div class="carousel-slide">
-                        <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80" alt="Laporan bisnis">
+                        <img src="{{ asset('assets/img/login-slides/image1.png') }}" alt="Laporan bisnis">
                         <div class="carousel-caption">
                             <div class="carousel-caption-inner">
                                 <i class="fas fa-chart-line text-purple-400 text-xl mb-2" style="display:block"></i>
@@ -234,7 +234,7 @@
 
                     <!-- Slide 3 -->
                     <div class="carousel-slide">
-                        <img src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&q=80" alt="Manajemen produk">
+                        <img src="{{ asset('assets/img/login-slides/image2.png') }}" alt="Manajemen produk">
                         <div class="carousel-caption">
                             <div class="carousel-caption-inner">
                                 <i class="fas fa-boxes text-emerald-400 text-xl mb-2" style="display:block"></i>
@@ -246,7 +246,7 @@
 
                     <!-- Slide 4 -->
                     <div class="carousel-slide">
-                        <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=80" alt="Tim kerja">
+                        <img src="{{ asset('assets/img/login-slides/image3.png') }}" alt="Tim kerja">
                         <div class="carousel-caption">
                             <div class="carousel-caption-inner">
                                 <i class="fas fa-users text-amber-400 text-xl mb-2" style="display:block"></i>
