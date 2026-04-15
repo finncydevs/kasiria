@@ -77,11 +77,14 @@
                     <div class="pt-2">
                         <label class="flex items-center cursor-pointer gap-3">
                             <div class="relative inline-block w-10 h-6 align-middle select-none transition duration-200 ease-in">
-                                <input type="checkbox" name="status" id="status" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer peer checked:right-0 checked:border-emerald-500 transition-all duration-300 right-4 border-slate-300" {{ old('status', $user->status) ? 'checked' : '' }} />
+                                <input type="checkbox" name="status" id="status" value="1" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer peer checked:right-0 checked:border-emerald-500 transition-all duration-300 right-4 border-slate-300" {{ old('status', $user->status) ? 'checked' : '' }} />
                                 <div class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-700 cursor-pointer peer-checked:bg-emerald-500/50 transition-colors duration-300"></div>
                             </div>
                             <span class="text-slate-200 font-medium">Akun Aktif</span>
                         </label>
+                        @error('status')
+                            <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="flex gap-3 mt-6 pt-4 border-t border-white/10">

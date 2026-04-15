@@ -186,7 +186,7 @@
                         <input type="checkbox" name="remember" class="rounded bg-white/10 border-white/20 text-blue-500 focus:ring-blue-500/50">
                         <span class="text-sm text-slate-400">Ingat Saya</span>
                     </label>
-                    <a href="#" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">Lupa Password?</a>
+                    <a href="{{ route('password.request') }}" class="text-sm text-blue-400 hover:text-blue-300 transition-colors">Lupa Password?</a>
                 </div>
 
                 <button type="submit" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold shadow-lg shadow-blue-500/30 transition-all transform hover:scale-[1.02]">
