@@ -1,5 +1,11 @@
+<style>
+    #reader video {
+        object-fit: cover !important;
+        width: 100% !important;
+    }
+</style>
 <div id="scanner-container" class="mb-3 hidden">
-    <div id="reader" style="width: 100%; min-height: 300px; background-color: #000;"></div>
+    <div id="reader" style="width: 100%; min-height: 300px; overflow: hidden; background-color: #000; border-radius: 0.5rem;"></div>
     <!-- <div id="scanner-debug-log" class="text-xs text-red-400 font-mono mt-2 p-2 bg-black/50 overflow-auto h-24 hidden"></div> -->
     <button type="button" class="btn btn-sm btn-danger mt-2" onclick="stopScanner()">Stop Scanner</button>
 </div>
@@ -42,7 +48,8 @@
             fps: 10, 
             // Make the scanning box wider for 1D barcodes
             qrbox: { width: 300, height: 150 },
-            // aspect ratio removed to use default (full width)
+            // Set aspect ratio to avoid stretching
+            aspectRatio: 1.0,
             experimentalFeatures: {
                 useBarCodeDetectorIfSupported: true
             }
