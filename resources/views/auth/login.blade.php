@@ -195,9 +195,9 @@
             </form>
 
             <div class="mt-8 text-center">
-                <p class="text-slate-400 text-sm">
+                <!-- <p class="text-slate-400 text-sm">
                     Belum punya akun? <a href="{{ route('register') }}" class="text-white hover:text-blue-400 font-medium transition-colors">Daftar disini</a>
-                </p>
+                </p> -->
             </div>
         </div>
 
